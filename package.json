@@ -1,0 +1,22 @@
+{
+  "name": "cadore-clinic",
+  "version": "1.0.0",
+  "description": "Site profissional da Cadore Clinic - Clínica de Estética",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "keywords": [
+    "clinic",
+    "estetica",
+    "agendamento"
+  ],
+  "author": "Cadore Clinic",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  }
+}

@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadore Clinic | Painel Administrativo</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌹</text></svg>">
+  
+  <style>
+    :root {
+      --primary: #722F37;
+      --primary-dark: #5A1A22;
+      --primary-light: #8B3A44;
+      --secondary: #1A1A1A;
+      --black: #0D0D0D;
+      --nude: #E8D5C4;
+      --nude-light: #F5EDE4;
+      --offwhite: #FAF8F5;
+      --gray-light: #E5E5E5;
+      --gray: #9E9E9E;
+      --gray-dark: #555;
+      --gold: #C4A265;
+      --white: #fff;
+      --success: #4CAF50;
+      --error: #D32F2F;
+      --warning: #FF9800;
+      --info: #2196F3;
+      --sidebar-width: 260px;
+      --font-heading: 'Cormorant Garamond', serif;
+      --font-body: 'Montserrat', sans-serif;
+      --shadow: 0 2px 12px rgba(0,0,0,0.08);
+      --transition: all 0.3s ease;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:var(--font-body); background:var(--offwhite); color:var(--secondary); min-height:100vh; }
+
+    /* ---- Login ---- */
+    .login-page { display:flex; align-items:center; justify-content:center; min-height:100vh; background:linear-gradient(135deg, var(--primary-dark), var(--black)); }
+    .login-card { background:var(--white); padding:3rem; border-radius:12px; width:380px; max-width:90vw; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+    .login-card h1 { font-family:var(--font-heading); font-size:2rem; text-align:center; margin-bottom:0.3rem; color:var(--primary); }
+    .login-card .subtitle { text-align:center; font-size:0.75rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--gray); margin-bottom:2rem; }
+    .login-card .form-group { margin-bottom:1.2rem; }
+    .login-card label { display:block; font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--gray-dark); margin-bottom:0.4rem; }
+    .login-card input { width:100%; padding:0.8rem 1rem; border:1.5px solid var(--gray-light); border-radius:6px; font-family:var(--font-body); font-size:0.9rem; transition:var(--transition); }
+    .login-card input:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px rgba(114,47,55,0.1); }
+    .login-card button { width:100%; padding:0.9rem; background:var(--primary); color:var(--white); border:none; border-radius:6px; font-family:var(--font-body); font-size:0.85rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; cursor:pointer; transition:var(--transition); margin-top:0.5rem; }
+    .login-card button:hover { background:var(--primary-dark); }
+    .login-error { color:var(--error); font-size:0.8rem; text-align:center; margin-top:1rem; display:none; }
+
+    /* ---- Dashboard Layout ---- */
+    .dashboard { display:none; }
+    .dashboard.active { display:flex; }
+
+    .sidebar { width:var(--sidebar-width); background:var(--secondary); color:var(--white); min-height:100vh; position:fixed; left:0; top:0; z-index:100; transition:var(--transition); display:flex; flex-direction:column; }
+    .sidebar-logo { padding:1.5rem; border-bottom:1px solid rgba(255,255,255,0.08); }
+    .sidebar-logo h2 { font-family:var(--font-heading); font-size:1.4rem; font-weight:500; }
+    .sidebar-logo span { font-size:0.6rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--gold); display:block; font-family:var(--font-body); }
+
+    .sidebar-nav { padding:1rem 0; flex:1; }
+    .sidebar-nav-item { display:flex; align-items:center; gap:0.8rem; padding:0.85rem 1.5rem; font-size:0.82rem; font-weight:500; color:rgba(255,255,255,0.6); cursor:pointer; transition:var(--transition); letter-spacing:0.04em; border-left:3px solid transparent; }
+    .sidebar-nav-item:hover { color:var(--white); background:rgba(255,255,255,0.05); }
+    .sidebar-nav-item.active { color:var(--white); background:rgba(255,255,255,0.08); border-left-color:var(--gold); }
+    .sidebar-nav-item svg { width:18px; height:18px; opacity:0.7; flex-shrink:0; }
+    .sidebar-nav-item .badge { margin-left:auto; background:var(--primary); color:var(--white); padding:2px 8px; border-radius:10px; font-size:0.7rem; font-weight:600; }
+
+    .sidebar-footer { padding:1rem 1.5rem; border-top:1px solid rgba(255,255,255,0.08); }
+    .sidebar-footer .user-name { font-size:0.85rem; font-weight:500; }
+    .sidebar-footer .user-role { font-size:0.7rem; color:var(--gold); letter-spacing:0.1em; text-transform:uppercase; }
+    .sidebar-footer button { margin-top:0.8rem; width:100%; padding:0.5rem; background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.6); border:none; border-radius:4px; font-family:var(--font-body); font-size:0.75rem; cursor:pointer; transition:var(--transition); }
+    .sidebar-footer button:hover { background:rgba(255,255,255,0.15); color:var(--white); }
+
+    .main-content { margin-left:var(--sidebar-width); flex:1; min-height:100vh; }
+    .main-header { background:var(--white); padding:1.2rem 2rem; display:flex; align-items:center; justify-content:space-between; box-shadow:var(--shadow); position:sticky; top:0; z-index:50; }
+    .main-header h1 { font-family:var(--font-heading); font-size:1.6rem; font-weight:500; }
+    .main-header .header-actions { display:flex; gap:0.8rem; align-items:center; }
+    .main-body { padding:2rem; }
+
+    /* ---- Dashboard Cards ---- */
+    .stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem; margin-bottom:2rem; }
+    .stat-card { background:var(--white); border-radius:10px; padding:1.5rem; box-shadow:var(--shadow); position:relative; overflow:hidden; }
+    .stat-card::after { content:''; position:absolute; top:0; left:0; width:4px; height:100%; }
+    .stat-card:nth-child(1)::after { background:var(--primary); }
+    .stat-card:nth-child(2)::after { background:var(--gold); }
+    .stat-card:nth-child(3)::after { background:var(--success); }
+    .stat-card:nth-child(4)::after { background:var(--info); }
+    .stat-card .stat-number { font-family:var(--font-heading); font-size:2.5rem; font-weight:600; line-height:1; }
+    .stat-card .stat-label { font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray); margin-top:0.4rem; font-weight:500; }
+
+    /* ---- Data Table ---- */
+    .panel { background:var(--white); border-radius:10px; box-shadow:var(--shadow); margin-bottom:1.5rem; overflow:hidden; }
+    .panel-header { padding:1.2rem 1.5rem; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--gray-light); }
+    .panel-header h3 { font-family:var(--font-heading); font-size:1.3rem; font-weight:500; }
+    .panel-body { padding:1.5rem; }
+
+    .data-table { width:100%; border-collapse:collapse; }
+    .data-table th { text-align:left; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.1em; color:var(--gray); padding:0.7rem 0.8rem; border-bottom:2px solid var(--gray-light); }
+    .data-table td { padding:0.8rem; border-bottom:1px solid var(--gray-light); font-size:0.88rem; vertical-align:middle; }
+    .data-table tr:hover { background:var(--offwhite); }
+    .data-table tr:last-child td { border-bottom:none; }
+
+    .status-badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
+    .status-confirmed { background:#E8F5E9; color:#2E7D32; }
+    .status-cancelled { background:#FFEBEE; color:#C62828; }
+    .status-completed { background:#E3F2FD; color:#1565C0; }
+    .status-pending { background:#FFF8E1; color:#F57F17; }
+
+    /* ---- Buttons ---- */
+    .btn { display:inline-flex; align-items:center; gap:0.4rem; padding:0.5rem 1rem; font-family:var(--font-body); font-size:0.78rem; font-weight:500; letter-spacing:0.05em; border:none; border-radius:6px; cursor:pointer; transition:var(--transition); text-transform:uppercase; }
+    .btn-primary { background:var(--primary); color:var(--white); }
+    .btn-primary:hover { background:var(--primary-dark); }
+    .btn-outline { background:transparent; color:var(--primary); border:1.5px solid var(--primary); }
+    .btn-outline:hover { background:var(--primary); color:var(--white); }
+    .btn-success { background:var(--success); color:var(--white); }
+    .btn-danger { background:var(--error); color:var(--white); }
+    .btn-danger:hover { background:#B71C1C; }
+    .btn-sm { padding:0.35rem 0.7rem; font-size:0.72rem; }
+    .btn-gold { background:var(--gold); color:var(--white); }
+    .btn-gold:hover { opacity:0.9; }
+
+    /* ---- Forms ---- */
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .form-group { margin-bottom:1rem; }
+    .form-group label { display:block; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; color:var(--gray-dark); margin-bottom:0.3rem; }
+    .form-group input, .form-group select, .form-group textarea { width:100%; padding:0.7rem 0.8rem; border:1.5px solid var(--gray-light); border-radius:6px; font-family:var(--font-body); font-size:0.88rem; transition:var(--transition); background:var(--white); }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline:none; border-color:var(--primary); }
+    .form-group textarea { min-height:60px; resize:vertical; }
+
+    /* ---- Page sections ---- */
+    .page-section { display:none; }
+    .page-section.active { display:block; animation:fadeIn 0.3s ease; }
+
+    .empty-state { text-align:center; padding:3rem; color:var(--gray); }
+    .empty-state svg { width:48px; height:48px; margin-bottom:1rem; opacity:0.4; }
+    .empty-state p { font-size:0.9rem; }
+
+    /* ---- Filter Bar ---- */
+    .filter-bar { display:flex; gap:1rem; margin-bottom:1.5rem; flex-wrap:wrap; align-items:center; }
+    .filter-bar input, .filter-bar select { padding:0.6rem 0.8rem; border:1.5px solid var(--gray-light); border-radius:6px; font-family:var(--font-body); font-size:0.85rem; }
+    .filter-bar input:focus, .filter-bar select:focus { outline:none; border-color:var(--primary); }
+
+    /* ---- Flag Select ---- */
+    .country-option { font-size:1rem; }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ---- Toast ---- */
+    .admin-toast { position:fixed; top:20px; right:20px; padding:0.8rem 1.2rem; border-radius:8px; color:var(--white); font-size:0.85rem; z-index:9999; animation:slideIn 0.3s ease; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+    .admin-toast.success { background:var(--success); }
+    .admin-toast.error { background:var(--error); }
+    @keyframes slideIn { from{opacity:0;transform:translateX(100px)} to{opacity:1;transform:translateX(0)} }
+
+    /* ---- Responsive ---- */
+    @media(max-width:1024px) { .stats-grid{grid-template-columns:repeat(2,1fr)} .form-row{grid-template-columns:1fr} }
+    @media(max-width:768px) {
+      .sidebar { transform:translateX(-100%); }
+      .sidebar.open { transform:translateX(0); }
+      .main-content { margin-left:0; }
+      .stats-grid { grid-template-columns:1fr; }
+      .data-table { font-size:0.8rem; }
+      .main-header .mobile-menu-btn { display:flex; }
+    }
+
+    .mobile-menu-btn { display:none; background:none; border:none; cursor:pointer; padding:0.5rem; }
+    @media(max-width:768px) { .mobile-menu-btn{display:flex;flex-direction:column;gap:4px} .mobile-menu-btn span{width:22px;height:2px;background:var(--secondary)} }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:6px; }
+    ::-webkit-scrollbar-track { background:var(--offwhite); }
+    ::-webkit-scrollbar-thumb { background:var(--gray); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--gray-dark); }
+  </style>
+</head>
+<body>
+
+  <!-- ========== LOGIN ========== -->
+  <div class="login-page" id="loginPage">
+    <div class="login-card">
+      <h1>Cadore</h1>
+      <p class="subtitle">Painel Administrativo</p>
+      <form id="loginForm">
+        <div class="form-group">
+          <label>Usuário</label>
+          <input type="text" id="loginUsername" placeholder="admin" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button type="submit">Entrar</button>
+      </form>
+      <p class="login-error" id="loginError"></p>
+    </div>
+  </div>
+
+  <!-- ========== DASHBOARD ========== -->
+  <div class="dashboard" id="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <h2>Cadore</h2>
+        <span>Clinic Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-nav-item active" data-page="overview" onclick="showPage('overview', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Visão Geral
+        </div>
+        <div class="sidebar-nav-item" data-page="appointments" onclick="showPage('appointments', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agendamentos
+          <span class="badge" id="badgeAppointments" style="display:none">0</span>
+        </div>
+        <div class="sidebar-nav-item" data-page="blocked" onclick="showPage('blocked', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+          Bloqueios
+        </div>
+        <div class="sidebar-nav-item" data-page="international" onclick="showPage('international', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          Agenda Internacional
+        </div>
+        <div class="sidebar-nav-item" data-page="services" onclick="showPage('services', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Serviços
+        </div>
+        <div class="sidebar-nav-item" data-page="messages" onclick="showPage('messages', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Mensagens
+          <span class="badge" id="badgeMessages" style="display:none">0</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-name" id="adminName">Admin</div>
+        <div class="user-role">Administradora</div>
+        <button onclick="logout()">Sair</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <header class="main-header">
+        <div style="display:flex;align-items:center;gap:1rem">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+          <h1 id="pageTitle">Visão Geral</h1>
+        </div>
+        <div class="header-actions">
+          <a href="/" class="btn btn-outline btn-sm">Ver Site</a>
+        </div>
+      </header>
+
+      <div class="main-body">
+        <!-- ===== Overview ===== -->
+        <div class="page-section active" id="pageOverview">
+          <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="stat-number" id="statToday">0</div><div class="stat-label">Hoje</div></div>
+            <div class="stat-card"><div class="stat-number" id="statUpcoming">0</div><div class="stat-label">Próximos</div></div>
+            <div class="stat-card"><div class="stat-number" id="statTotal">0</div><div class="stat-label">Total</div></div>
+            <div class="stat-card"><div class="stat-number" id="statMessages">0</div><div class="stat-label">Mensagens</div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><h3>Próximos Agendamentos</h3></div>
+            <div class="panel-body" id="recentAppointments"><div class="empty-state"><p>Carregando...</p></div></div>
+          </div>
+        </div>
+
+        <!-- ===== Appointments ===== -->
+        <div class="page-section" id="pageAppointments">
+          <div class="filter-bar">
+            <input type="date" id="filterDate" onchange="loadAppointments()">
+            <select id="filterStatus" onchange="loadAppointments()">
+              <option value="">Todos os status</option>
+              <option value="confirmed">Confirmados</option>
+              <option value="cancelled">Cancelados</option>
+              <option value="completed">Concluídos</option>
+            </select>
+            <button class="btn btn-gold" onclick="exportAppointments()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Exportar CSV
+            </button>
+          </div>
+          <div class="panel">
+            <div class="panel-body">
+              <table class="data-table">
+                <thead>
+                  <tr><th>Cliente</th><th>Telefone</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Status</th><th>Ações</th></tr>
+                </thead>
+                <tbody id="appointmentsTableBody">
+                  <tr><td colspan="7" style="text-align:center;color:var(--gray)">Carregando...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Blocked Times ===== -->
+        <div class="page-section" id="pageBlocked">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Bloquear Horário</h3>
+            </div>
+            <div class="panel-body">
+              <form id="blockForm" onsubmit="addBlockedTime(event)">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Data *</label>
+                    <input type="date" id="blockDate" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Horário (deixe vazio para dia inteiro)</label>
+                    <input type="time" id="blockTime">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>
+                    <input type="checkbox" id="blockAllDay" onchange="document.getElementById('blockTime').disabled = this.checked">
+                    Bloquear dia inteiro
+                  </label>
+                </div>
+                <div class="form-group">
+                  <label>Motivo</label>
+                  <input type="text" id="blockReason" placeholder="Motivo do bloqueio (opcional)">
+                </div>
+                <button type="submit" class="btn btn-primary">Bloquear</button>
+              </form>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:1.5rem">
+            <div class="panel-header"><h3>Horários Bloqueados</h3></div>
+            <div class="panel-body">
+              <table class="data-table">
+                <thead><tr><th>Data</th><th>Horário</th><th>Motivo</th><th>Ações</th></tr></thead>
+                <tbody id="blockedTableBody"><tr><td colspan="4" style="text-align:center;color:var(--gray)">Carregando...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== International Dates ===== -->
+        <div class="page-section" id="pageInternational">
+          <div class="panel">
+            <div class="panel-header"><h3>Adicionar Viagem Internacional</h3></div>
+            <div class="panel-body">
+              <form id="intlForm" onsubmit="addInternationalDate(event)">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>País *</label>
+                    <select id="intlCountry" required onchange="updateIntlFlag()">
+                      <option value="">Selecione...</option>
+                      <option value="BR|Brasil|🇧🇷">🇧🇷 Brasil</option>
+                      <option value="NL|Holanda|🇳🇱">🇳🇱 Holanda</option>
+                      <option value="PT|Portugal|🇵🇹">🇵🇹 Portugal</option>
+                      <option value="ES|Espanha|🇪🇸">🇪🇸 Espanha</option>
+                      <option value="FR|França|🇫🇷">🇫🇷 França</option>
+                      <option value="IT|Itália|🇮🇹">🇮🇹 Itália</option>
+                      <option value="DE|Alemanha|🇩🇪">🇩🇪 Alemanha</option>
+                      <option value="US|Estados Unidos|🇺🇸">🇺🇸 Estados Unidos</option>
+                      <option value="GB|Reino Unido|🇬🇧">🇬🇧 Reino Unido</option>
+                      <option value="BE|Bélgica|🇧🇪">🇧🇪 Bélgica</option>
+                      <option value="CH|Suíça|🇨🇭">🇨🇭 Suíça</option>
+                      <option value="JP|Japão|🇯🇵">🇯🇵 Japão</option>
+                      <option value="AE|Emirados Árabes|🇦🇪">🇦🇪 Emirados Árabes</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" id="intlCity" placeholder="Ex: Amsterdã">
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Data início *</label>
+                    <input type="date" id="intlStart" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Data fim *</label>
+                    <input type="date" id="intlEnd" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Adicionar</button>
+              </form>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:1.5rem">
+            <div class="panel-header"><h3>Datas Internacionais</h3></div>
+            <div class="panel-body">
+              <table class="data-table">
+                <thead><tr><th>País</th><th>Cidade</th><th>Período</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody id="intlTableBody"><tr><td colspan="5" style="text-align:center;color:var(--gray)">Carregando...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Services ===== -->
+        <div class="page-section" id="pageServices">
+          <div class="panel">
+            <div class="panel-header"><h3>Adicionar Serviço</h3></div>
+            <div class="panel-body">
+              <form id="serviceForm" onsubmit="addService(event)">
+                <div class="form-row">
+                  <div class="form-group"><label>Nome *</label><input type="text" id="svcName" required placeholder="Nome do serviço"></div>
+                  <div class="form-group"><label>Duração (min)</label><input type="number" id="svcDuration" value="60" min="15" step="15"></div>
+                </div>
+                <div class="form-group"><label>Descrição</label><textarea id="svcDescription" placeholder="Descrição do serviço..."></textarea></div>
+                <button type="submit" class="btn btn-primary">Adicionar Serviço</button>
+              </form>
+            </div>
+          </div>
+          <div class="panel" style="margin-top:1.5rem">
+            <div class="panel-header"><h3>Serviços Cadastrados</h3></div>
+            <div class="panel-body">
+              <table class="data-table">
+                <thead><tr><th>Nome</th><th>Duração</th><th>Status</th><th>Ações</th></tr></thead>
+                <tbody id="servicesTableBody"><tr><td colspan="4" style="text-align:center;color:var(--gray)">Carregando...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== Messages ===== -->
+        <div class="page-section" id="pageMessages">
+          <div class="panel">
+            <div class="panel-header"><h3>Mensagens de Contato</h3></div>
+            <div class="panel-body">
+              <table class="data-table">
+                <thead><tr><th>Nome</th><th>Email</th><th>Telefone</th><th>Mensagem</th><th>Data</th><th>Status</th></tr></thead>
+                <tbody id="messagesTableBody"><tr><td colspan="6" style="text-align:center;color:var(--gray)">Carregando...</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== STATE ==========
+    let sessionId = localStorage.getItem('cadore_session');
+    const API = '/api/admin';
+    const pageTitles = {
+      overview: 'Visão Geral',
+      appointments: 'Agendamentos',
+      blocked: 'Bloqueios de Horário',
+      international: 'Agenda Internacional',
+      services: 'Serviços',
+      messages: 'Mensagens'
+    };
+
+    // ========== INIT ==========
+    document.addEventListener('DOMContentLoaded', () => {
+      if (sessionId) checkSession();
+      document.getElementById('loginForm').addEventListener('submit', login);
+    });
+
+    // ========== AUTH ==========
+    async function login(e) {
+      e.preventDefault();
+      const username = document.getElementById('loginUsername').value;
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+
+      try {
+        const res = await fetch(`${API}/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          sessionId = data.sessionId;
+          localStorage.setItem('cadore_session', sessionId);
+          document.getElementById('adminName').textContent = data.name;
+          showDashboard();
+        } else {
+          errorEl.textContent = data.error || 'Erro no login';
+          errorEl.style.display = 'block';
+        }
+      } catch (err) {
+        errorEl.textContent = 'Erro de conexão';
+        errorEl.style.display = 'block';
+      }
+    }
+
+    async function checkSession() {
+      try {
+        const res = await fetch(`${API}/me`, { headers: { 'x-session-id': sessionId } });
+        if (res.ok) {
+          const user = await res.json();
+          document.getElementById('adminName').textContent = user.name;
+          showDashboard();
+        } else {
+          localStorage.removeItem('cadore_session');
+          sessionId = null;
+        }
+      } catch (err) {
+        localStorage.removeItem('cadore_session');
+        sessionId = null;
+      }
+    }
+
+    function logout() {
+      fetch(`${API}/logout`, { method: 'POST', headers: { 'x-session-id': sessionId } });
+      localStorage.removeItem('cadore_session');
+      sessionId = null;
+      document.getElementById('dashboard').classList.remove('active');
+      document.getElementById('loginPage').style.display = 'flex';
+    }
+
+    function showDashboard() {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashboard').classList.add('active');
+      loadStats();
+      loadAppointments();
+      loadRecentAppointments();
+    }
+
+    function apiHeaders() {
+      return { 'Content-Type': 'application/json', 'x-session-id': sessionId };
+    }
+
+    // ========== NAVIGATION ==========
+    function showPage(page, el) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      document.getElementById('page' + page.charAt(0).toUpperCase() + page.slice(1)).classList.add('active');
+      document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
+      if (el) el.classList.add('active');
+      document.getElementById('pageTitle').textContent = pageTitles[page] || '';
+
+      // Load data for page
+      if (page === 'overview') { loadStats(); loadRecentAppointments(); }
+      if (page === 'appointments') loadAppointments();
+      if (page === 'blocked') loadBlockedTimes();
+      if (page === 'international') loadIntlDates();
+      if (page === 'services') loadServices();
+      if (page === 'messages') loadMessages();
+
+      // Close sidebar on mobile
+      document.getElementById('sidebar').classList.remove('open');
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('open');
+    }
+
+    // ========== STATS ==========
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API}/stats`, { headers: apiHeaders() });
+        const s = await res.json();
+        document.getElementById('statToday').textContent = s.todayCount;
+        document.getElementById('statUpcoming').textContent = s.upcomingCount;
+        document.getElementById('statTotal').textContent = s.totalCount;
+        document.getElementById('statMessages').textContent = s.unreadMessages;
+
+        if (s.upcomingCount > 0) {
+          document.getElementById('badgeAppointments').textContent = s.upcomingCount;
+          document.getElementById('badgeAppointments').style.display = 'inline';
+        }
+        if (s.unreadMessages > 0) {
+          document.getElementById('badgeMessages').textContent = s.unreadMessages;
+          document.getElementById('badgeMessages').style.display = 'inline';
+        }
+      } catch (err) { console.error(err); }
+    }
+
+    // ========== APPOINTMENTS ==========
+    async function loadAppointments() {
+      try {
+        const date = document.getElementById('filterDate').value;
+        const status = document.getElementById('filterStatus').value;
+        let url = `${API}/appointments?`;
+        if (date) url += `date=${date}&`;
+        if (status) url += `status=${status}&`;
+
+        const res = await fetch(url, { headers: apiHeaders() });
+        const data = await res.json();
+
+        const tbody = document.getElementById('appointmentsTableBody');
+        if (data.appointments.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray);padding:2rem">Nenhum agendamento encontrado</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.appointments.map(a => `
+          <tr>
+            <td><strong>${a.client_name}</strong></td>
+            <td>${a.client_phone}</td>
+            <td>${a.service_name}</td>
+            <td>${formatDate(a.appointment_date)}</td>
+            <td>${a.appointment_time}</td>
+            <td><span class="status-badge status-${a.status}">${statusLabel(a.status)}</span></td>
+            <td>
+              ${a.status === 'confirmed' ? `
+                <button class="btn btn-success btn-sm" onclick="updateStatus(${a.id},'completed')">✓</button>
+                <button class="btn btn-danger btn-sm" onclick="updateStatus(${a.id},'cancelled')">✕</button>
+              ` : ''}
+              <button class="btn btn-sm btn-outline" onclick="deleteAppointment(${a.id})" title="Excluir">🗑</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+
+    async function loadRecentAppointments() {
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const res = await fetch(`${API}/appointments?status=confirmed&limit=5`, { headers: apiHeaders() });
+        const data = await res.json();
+        const container = document.getElementById('recentAppointments');
+
+        if (data.appointments.length === 0) {
+          container.innerHTML = '<div class="empty-state"><p>Nenhum agendamento próximo</p></div>';
+          return;
+        }
+
+        container.innerHTML = `<table class="data-table"><thead><tr><th>Cliente</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Status</th></tr></thead><tbody>
+          ${data.appointments.slice(0, 5).map(a => `
+            <tr>
+              <td><strong>${a.client_name}</strong></td>
+              <td>${a.service_name}</td>
+              <td>${formatDate(a.appointment_date)}</td>
+              <td>${a.appointment_time}</td>
+              <td><span class="status-badge status-${a.status}">${statusLabel(a.status)}</span></td>
+            </tr>
+          `).join('')}
+        </tbody></table>`;
+      } catch (err) { console.error(err); }
+    }
+
+    async function updateStatus(id, status) {
+      try {
+        await fetch(`${API}/appointments/${id}`, {
+          method: 'PATCH',
+          headers: apiHeaders(),
+          body: JSON.stringify({ status })
+        });
+        showAdminToast('Status atualizado!', 'success');
+        loadAppointments();
+        loadStats();
+      } catch (err) { showAdminToast('Erro ao atualizar', 'error'); }
+    }
+
+    async function deleteAppointment(id) {
+      if (!confirm('Excluir este agendamento?')) return;
+      try {
+        await fetch(`${API}/appointments/${id}`, { method: 'DELETE', headers: apiHeaders() });
+        showAdminToast('Agendamento excluído', 'success');
+        loadAppointments();
+        loadStats();
+      } catch (err) { showAdminToast('Erro ao excluir', 'error'); }
+    }
+
+    async function exportAppointments() {
+      const start = document.getElementById('filterDate').value || '';
+      window.open(`${API}/export?start_date=${start}&end_date=2099-12-31`, '_blank');
+    }
+
+    // ========== BLOCKED TIMES ==========
+    async function loadBlockedTimes() {
+      try {
+        const res = await fetch(`${API}/blocked-times`, { headers: apiHeaders() });
+        const blocks = await res.json();
+        const tbody = document.getElementById('blockedTableBody');
+
+        if (blocks.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray)">Nenhum bloqueio</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = blocks.map(b => `
+          <tr>
+            <td>${formatDate(b.block_date)}</td>
+            <td>${b.all_day ? 'Dia inteiro' : b.block_time || '-'}</td>
+            <td>${b.reason || '-'}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="removeBlock(${b.id})">Remover</button></td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+
+    async function addBlockedTime(e) {
+      e.preventDefault();
+      const block_date = document.getElementById('blockDate').value;
+      const block_time = document.getElementById('blockTime').value;
+      const all_day = document.getElementById('blockAllDay').checked;
+      const reason = document.getElementById('blockReason').value;
+
+      try {
+        const res = await fetch(`${API}/blocked-times`, {
+          method: 'POST',
+          headers: apiHeaders(),
+          body: JSON.stringify({ block_date, block_time: all_day ? null : block_time, all_day, reason })
+        });
+        if (res.ok) {
+          showAdminToast('Horário bloqueado!', 'success');
+          document.getElementById('blockForm').reset();
+          loadBlockedTimes();
+        }
+      } catch (err) { showAdminToast('Erro ao bloquear', 'error'); }
+    }
+
+    async function removeBlock(id) {
+      try {
+        await fetch(`${API}/blocked-times/${id}`, { method: 'DELETE', headers: apiHeaders() });
+        showAdminToast('Bloqueio removido', 'success');
+        loadBlockedTimes();
+      } catch (err) { showAdminToast('Erro', 'error'); }
+    }
+
+    // ========== INTERNATIONAL DATES ==========
+    async function loadIntlDates() {
+      try {
+        const res = await fetch(`${API}/international-dates`, { headers: apiHeaders() });
+        const dates = await res.json();
+        const tbody = document.getElementById('intlTableBody');
+
+        if (dates.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray)">Nenhuma viagem cadastrada</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = dates.map(d => `
+          <tr>
+            <td>${d.flag_emoji} ${d.country_name}</td>
+            <td>${d.city || '-'}</td>
+            <td>${formatDate(d.start_date)} — ${formatDate(d.end_date)}</td>
+            <td><span class="status-badge ${d.active ? 'status-confirmed' : 'status-cancelled'}">${d.active ? 'Ativo' : 'Inativo'}</span></td>
+            <td>
+              <button class="btn btn-sm ${d.active ? 'btn-outline' : 'btn-success'}" onclick="toggleIntl(${d.id}, ${!d.active})">${d.active ? 'Desativar' : 'Ativar'}</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteIntl(${d.id})">Excluir</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+
+    async function addInternationalDate(e) {
+      e.preventDefault();
+      const sel = document.getElementById('intlCountry').value.split('|');
+      const city = document.getElementById('intlCity').value;
+      const start_date = document.getElementById('intlStart').value;
+      const end_date = document.getElementById('intlEnd').value;
+
+      try {
+        const res = await fetch(`${API}/international-dates`, {
+          method: 'POST',
+          headers: apiHeaders(),
+          body: JSON.stringify({ country_code: sel[0], country_name: sel[1], flag_emoji: sel[2], start_date, end_date, city })
+        });
+        if (res.ok) {
+          showAdminToast('Viagem adicionada!', 'success');
+          document.getElementById('intlForm').reset();
+          loadIntlDates();
+        }
+      } catch (err) { showAdminToast('Erro ao adicionar', 'error'); }
+    }
+
+    async function toggleIntl(id, active) {
+      try {
+        await fetch(`${API}/international-dates/${id}`, { method: 'PATCH', headers: apiHeaders(), body: JSON.stringify({ active }) });
+        loadIntlDates();
+      } catch (err) { showAdminToast('Erro', 'error'); }
+    }
+
+    async function deleteIntl(id) {
+      if (!confirm('Excluir esta viagem?')) return;
+      try {
+        await fetch(`${API}/international-dates/${id}`, { method: 'DELETE', headers: apiHeaders() });
+        showAdminToast('Removido', 'success');
+        loadIntlDates();
+      } catch (err) { showAdminToast('Erro', 'error'); }
+    }
+
+    // ========== SERVICES ==========
+    async function loadServices() {
+      try {
+        const res = await fetch(`${API}/services`, { headers: apiHeaders() });
+        const services = await res.json();
+        const tbody = document.getElementById('servicesTableBody');
+
+        if (services.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray)">Nenhum serviço</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = services.map(s => `
+          <tr>
+            <td><strong>${s.name}</strong><br><small style="color:var(--gray)">${s.description || ''}</small></td>
+            <td>${s.duration} min</td>
+            <td><span class="status-badge ${s.active ? 'status-confirmed' : 'status-cancelled'}">${s.active ? 'Ativo' : 'Inativo'}</span></td>
+            <td>
+              <button class="btn btn-sm ${s.active ? 'btn-outline' : 'btn-success'}" onclick="toggleService(${s.id}, ${!s.active})">${s.active ? 'Desativar' : 'Ativar'}</button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+
+    async function addService(e) {
+      e.preventDefault();
+      const name = document.getElementById('svcName').value;
+      const description = document.getElementById('svcDescription').value;
+      const duration = parseInt(document.getElementById('svcDuration').value);
+
+      try {
+        const res = await fetch(`${API}/services`, {
+          method: 'POST',
+          headers: apiHeaders(),
+          body: JSON.stringify({ name, description, duration })
+        });
+        if (res.ok) {
+          showAdminToast('Serviço adicionado!', 'success');
+          document.getElementById('serviceForm').reset();
+          loadServices();
+        }
+      } catch (err) { showAdminToast('Erro', 'error'); }
+    }
+
+    async function toggleService(id, active) {
+      try {
+        await fetch(`${API}/services/${id}`, { method: 'PATCH', headers: apiHeaders(), body: JSON.stringify({ active }) });
+        loadServices();
+      } catch (err) { showAdminToast('Erro', 'error'); }
+    }
+
+    // ========== MESSAGES ==========
+    async function loadMessages() {
+      try {
+        const res = await fetch(`${API}/messages`, { headers: apiHeaders() });
+        const messages = await res.json();
+        const tbody = document.getElementById('messagesTableBody');
+
+        if (messages.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--gray)">Nenhuma mensagem</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = messages.map(m => `
+          <tr style="${m.read ? '' : 'font-weight:600;background:var(--nude-light)'}">
+            <td>${m.name}</td>
+            <td>${m.email || '-'}</td>
+            <td>${m.phone || '-'}</td>
+            <td style="max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${m.message}</td>
+            <td>${formatDateTime(m.created_at)}</td>
+            <td>
+              ${m.read ? '<span style="color:var(--gray);font-size:0.8rem">Lida</span>' :
+                `<button class="btn btn-sm btn-primary" onclick="markRead(${m.id})">Marcar lida</button>`}
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) { console.error(err); }
+    }
+
+    async function markRead(id) {
+      try {
+        await fetch(`${API}/messages/${id}`, { method: 'PATCH', headers: apiHeaders() });
+        loadMessages();
+        loadStats();
+      } catch (err) { showAdminToast('Erro', 'error'); }
+    }
+
+    // ========== UTILS ==========
+    function formatDate(str) {
+      if (!str) return '-';
+      const [y, m, d] = str.split('-');
+      return `${d}/${m}/${y}`;
+    }
+
+    function formatDateTime(str) {
+      if (!str) return '-';
+      const d = new Date(str);
+      return d.toLocaleDateString('pt-BR') + ' ' + d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function statusLabel(s) {
+      const labels = { confirmed: 'Confirmado', cancelled: 'Cancelado', completed: 'Concluído', pending: 'Pendente' };
+      return labels[s] || s;
+    }
+
+    function showAdminToast(msg, type) {
+      const toast = document.createElement('div');
+      toast.className = `admin-toast ${type}`;
+      toast.textContent = msg;
+      document.body.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Cadore Clinic - Clínica de estética premium com 10 anos de experiência internacional. Micropigmentação, lash lifting, brow lamination e mais. Agende online.">
+  <meta name="keywords" content="clínica estética, micropigmentação, lash lifting, brow lamination, remoção de tatuagem, Goiânia, Eline Cadore">
+  <meta name="author" content="Cadore Clinic">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Cadore Clinic | Estética Premium">
+  <meta property="og:description" content="Experiência internacional em estética. Agende seu horário online.">
+  <meta property="og:type" content="website">
+  
+  <title>Cadore Clinic | Estética Premium & Beleza Internacional</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  
+  <!-- CSS -->
+  <link rel="stylesheet" href="css/style.css">
+
+  <!-- Favicon (inline SVG, stylized C) -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text x='18' y='78' font-size='80' font-family='Cormorant Garamond, serif' fill='%23C4A265' font-weight='700'>C</text></svg>">
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="header" id="header">
+    <nav class="nav">
+      <button class="burger-toggle" id="mobileToggle" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <a href="#home" class="logo">
+        <div class="logo-text">Cadore <span>Clinic</span></div>
+      </a>
+
+      <a href="#booking" class="header-cta btn btn-primary btn-sm">Agendar</a>
+    </nav>
+  </header>
+
+  <!-- ========== SIDE MENU ========== -->
+  <div class="side-menu-overlay" id="mobileOverlay"></div>
+  <aside class="side-menu" id="sideMenu">
+    <div class="side-menu-header">
+      <div class="side-menu-brand">Cadore <span>Clinic</span></div>
+      <button class="side-menu-close" id="sideMenuClose" aria-label="Fechar">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <nav class="side-menu-nav" id="navLinks">
+      <a href="#home" class="side-menu-link active">Início</a>
+      <a href="#about" class="side-menu-link">Sobre</a>
+      <a href="#services" class="side-menu-link">Serviços</a>
+      <a href="#booking" class="side-menu-link">Agendar</a>
+      <a href="#international" class="side-menu-link">Agenda Internacional</a>
+      <a href="#contact" class="side-menu-link">Contato</a>
+    </nav>
+    <div class="side-menu-footer">
+      <a href="#" class="btn btn-whatsapp btn-sm side-menu-whatsapp" id="sideMenuWhatsApp">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Falar no WhatsApp
+      </a>
+      <p class="side-menu-copy">&copy; 2026 Cadore Clinic</p>
+    </div>
+  </aside>
+
+  <!-- ========== HERO ========== -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <canvas class="hero-lines" id="heroLines"></canvas>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-label">Estética Premium & Internacional</p>
+      <h1 class="hero-title">Beleza com <em>Excelência</em> e Confiança</h1>
+      <p class="hero-subtitle">Mais de 10 anos de experiência internacional em procedimentos estéticos. Cuidado personalizado que realça a sua beleza natural.</p>
+      <div class="hero-buttons">
+        <a href="#booking" class="btn btn-primary btn-lg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agendar Horário
+        </a>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="hero-scroll-icon"></div>
+    </div>
+  </section>
+
+  <!-- ========== ABOUT ========== -->
+  <section class="section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-image reveal-left">
+          <div class="about-image-wrapper">
+            <img src="images/IMG_0340.jpeg" alt="Eline Cadore - Cadore Clinic" class="about-image-photo" loading="lazy">
+          </div>
+          <div class="about-badge">
+            <div class="number">10+</div>
+            <div class="label">anos de<br>experiência</div>
+          </div>
+        </div>
+        
+        <div class="about-content reveal-right">
+          <p class="about-subtitle">Conheça a Cadore Clinic</p>
+          <h2>Eline Cadore</h2>
+          <p>Especialista em estética com mais de <strong>10 anos de experiência internacional</strong>, Eline Cadore construiu uma trajetória marcada pela excelência, cuidado e inovação. Residente em Amsterdã, na Holanda, Eline leva sua expertise e técnica apurada para atendimentos no Brasil e em diversos países.</p>
+          <p>A Cadore Clinic nasceu da paixão por valorizar a beleza natural de cada pessoa, com procedimentos seguros, modernos e resultados que inspiram <strong>confiança</strong>. Cada atendimento é personalizado, unindo técnica de ponta à sensibilidade de quem entende que beleza vai além da aparência.</p>
+          
+          <div class="about-highlights">
+            <div class="about-highlight-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Experiência Internacional</span>
+            </div>
+            <div class="about-highlight-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Residente em Amsterdã</span>
+            </div>
+            <div class="about-highlight-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Atendimento Personalizado</span>
+            </div>
+            <div class="about-highlight-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Técnicas Exclusivas</span>
+            </div>
+          </div>
+          
+          <a href="#booking" class="btn btn-primary" style="margin-top:1rem">Agendar Consulta</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== SERVICES ========== -->
+  <section class="section section-nude" id="services">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Nossos Serviços</h2>
+        <div class="section-line"></div>
+        <p>Procedimentos estéticos premium realizados com técnica, cuidado e os melhores materiais do mercado internacional.</p>
+      </div>
+      
+      <div class="services-grid" id="servicesGrid">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== BOOKING ========== -->
+  <section class="section" id="booking">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Agende Seu Horário</h2>
+        <div class="section-line"></div>
+        <p>Escolha o serviço, selecione a data e horário desejados. Simples, rápido e prático.</p>
+      </div>
+      
+      <div class="booking-wrapper reveal">
+        <div class="booking-info">
+          <h2>Reserve Online</h2>
+          <p>Agende seu procedimento em poucos passos. Você receberá a confirmação via WhatsApp.</p>
+          
+          <div class="booking-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            <span>Confirmação instantânea</span>
+          </div>
+          <div class="booking-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span>Horários flexíveis</span>
+          </div>
+          <div class="booking-info-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            <span>Agendamento seguro</span>
+          </div>
+        </div>
+        
+        <div class="booking-form-wrapper">
+          <!-- Steps indicator -->
+          <div class="booking-steps">
+            <div class="booking-step active" data-step="1">
+              <span class="booking-step-number">1</span>
+              <span>Serviço</span>
+            </div>
+            <div class="booking-step-divider"></div>
+            <div class="booking-step" data-step="2">
+              <span class="booking-step-number">2</span>
+              <span>Data</span>
+            </div>
+            <div class="booking-step-divider"></div>
+            <div class="booking-step" data-step="3">
+              <span class="booking-step-number">3</span>
+              <span>Dados</span>
+            </div>
+          </div>
+          
+          <!-- Step 1: Choose Service -->
+          <div class="booking-panel active" id="bookingStep1">
+            <div class="form-group">
+              <label class="form-label">Selecione o serviço</label>
+              <select class="form-select" id="bookingService">
+                <option value="">Escolha um serviço...</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-top:1rem" onclick="bookingNextStep(2)" id="btnStep1">
+              Próximo
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
+          </div>
+          
+          <!-- Step 2: Choose Date & Time -->
+          <div class="booking-panel" id="bookingStep2">
+            <div class="calendar-container">
+              <div class="calendar-header">
+                <button class="calendar-nav-btn" onclick="changeMonth(-1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                </button>
+                <h4 id="calendarMonthYear"></h4>
+                <button class="calendar-nav-btn" onclick="changeMonth(1)">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+                </button>
+              </div>
+              <div class="calendar-grid" id="calendarGrid"></div>
+            </div>
+            
+            <div id="timeSlotsContainer" style="display:none">
+              <label class="form-label">Horários disponíveis</label>
+              <div id="intlInfo" style="display:none;margin-bottom:0.8rem;padding:0.5rem;background:var(--color-nude-light);border-radius:4px;font-size:0.85rem"></div>
+              <div class="time-slots" id="timeSlots"></div>
+            </div>
+            
+            <div style="display:flex;gap:1rem;margin-top:1.5rem">
+              <button class="btn btn-outline" style="flex:1" onclick="bookingNextStep(1)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Voltar
+              </button>
+              <button class="btn btn-primary" style="flex:1" onclick="bookingNextStep(3)" id="btnStep2" disabled>
+                Próximo
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+              </button>
+            </div>
+          </div>
+          
+          <!-- Step 3: Client Info -->
+          <div class="booking-panel" id="bookingStep3">
+            <div class="form-group">
+              <label class="form-label">Nome completo *</label>
+              <input type="text" class="form-input" id="bookingName" placeholder="Seu nome completo" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Telefone / WhatsApp *</label>
+              <input type="tel" class="form-input" id="bookingPhone" placeholder="(00) 00000-0000" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" id="bookingEmail" placeholder="seu@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Observações</label>
+              <textarea class="form-textarea" id="bookingNotes" placeholder="Alguma informação adicional..."></textarea>
+            </div>
+            
+            <div id="bookingSummary" style="background:var(--color-nude-light);border-radius:4px;padding:1rem;margin-bottom:1rem;font-size:0.9rem"></div>
+            
+            <div style="display:flex;gap:1rem">
+              <button class="btn btn-outline" style="flex:1" onclick="bookingNextStep(2)">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+                Voltar
+              </button>
+              <button class="btn btn-primary" style="flex:1" onclick="submitBooking()" id="btnSubmit">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                Confirmar Agendamento
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== INTERNATIONAL ========== -->
+  <section class="section section-dark" id="international">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Agenda Internacional</h2>
+        <div class="section-line"></div>
+        <p>A Cadore Clinic atende em diversas localidades. Confira as próximas datas de atendimento internacional.</p>
+      </div>
+      
+      <div class="intl-list reveal" id="intlList">
+        <!-- Populated via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT ========== -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Entre em Contato</h2>
+        <div class="section-line"></div>
+        <p>Estamos à disposição para atendê-la. Envie uma mensagem ou entre em contato pelo WhatsApp.</p>
+      </div>
+      
+      <div class="contact-grid">
+        <div class="reveal-left">
+          <h3 style="font-size:1.6rem;margin-bottom:0.5rem">Fale Conosco</h3>
+          <p style="color:var(--color-gray-dark);font-weight:300">Tire suas dúvidas, solicite informações ou agende uma consulta.</p>
+          
+          <div class="contact-info-list">
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <div class="contact-info-text">
+                <h4>WhatsApp</h4>
+                <p><a href="#" id="contactWhatsApp">Clique para conversar</a></p>
+              </div>
+            </div>
+            
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div class="contact-info-text">
+                <h4>Email</h4>
+                <p><a href="mailto:contato@cadoreclinic.com">contato@cadoreclinic.com</a></p>
+              </div>
+            </div>
+            
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div class="contact-info-text">
+                <h4>Localização</h4>
+                <p>Goiânia – Setor Bueno<br>Goiás, Brasil</p>
+              </div>
+            </div>
+            
+            <div class="contact-info-item">
+              <div class="contact-info-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              </div>
+              <div class="contact-info-text">
+                <h4>Instagram</h4>
+                <p><a href="https://instagram.com/cadoreclinic" target="_blank">@cadoreclinic</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="reveal-right">
+          <form class="contact-form" id="contactForm">
+            <div class="form-group">
+              <label class="form-label">Nome *</label>
+              <input type="text" class="form-input" id="contactName" placeholder="Seu nome" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" id="contactEmail" placeholder="seu@email.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Telefone</label>
+              <input type="tel" class="form-input" id="contactPhone" placeholder="(00) 00000-0000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Mensagem *</label>
+              <textarea class="form-textarea" id="contactMessage" placeholder="Escreva sua mensagem..." rows="4" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              Enviar Mensagem
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== MAP ========== -->
+  <section class="section section-nude" id="location">
+    <div class="container">
+      <div class="section-header reveal">
+        <h2>Nossa Localização</h2>
+        <div class="section-line"></div>
+        <p>Goiânia – Setor Bueno, Brasil</p>
+      </div>
+      
+      <div class="map-container reveal">
+        <iframe 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15281.57684554!2d-49.2624!3d-16.7074!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x935ef11b63e8dd9d%3A0x9e73b7b40d3c9e9a!2sSetor%20Bueno%2C%20Goi%C3%A2nia%20-%20GO!5e0!3m2!1spt-BR!2sbr!4v1690000000000!5m2!1spt-BR!2sbr" 
+          allowfullscreen="" 
+          loading="lazy" 
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">
+            Cadore
+            <span>Clinic</span>
+          </div>
+          <p>Clínica de estética premium com experiência internacional. Beleza, confiança e excelência em cada procedimento.</p>
+        </div>
+        <div>
+          <h4>Navegação</h4>
+          <div class="footer-links">
+            <a href="#home">Início</a>
+            <a href="#about">Sobre</a>
+            <a href="#services">Serviços</a>
+            <a href="#booking">Agendar</a>
+            <a href="#contact">Contato</a>
+          </div>
+        </div>
+        <div>
+          <h4>Serviços</h4>
+          <div class="footer-links">
+            <a href="#services">Micropigmentação</a>
+            <a href="#services">Lash Lifting</a>
+            <a href="#services">Brow Lamination</a>
+            <a href="#services">Remoção de Tatuagem</a>
+          </div>
+        </div>
+        <div>
+          <h4>Contato</h4>
+          <div class="footer-links">
+            <a href="#" id="footerWhatsApp">WhatsApp</a>
+            <a href="mailto:contato@cadoreclinic.com">Email</a>
+            <a href="https://instagram.com/cadoreclinic" target="_blank">Instagram</a>
+            <a href="#location">Localização</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Cadore Clinic. Todos os direitos reservados.</p>
+        <p>Feito com ♥ para a sua beleza</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== WHATSAPP FLOAT ========== -->
+  <a href="#" class="whatsapp-float" id="whatsAppFloat" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+    <span class="whatsapp-tooltip">Fale conosco!</span>
+  </a>
+
+  <!-- ========== CONFIRMATION MODAL ========== -->
+  <div class="modal-overlay" id="confirmationModal">
+    <div class="modal">
+      <div class="modal-icon">✓</div>
+      <h3>Agendamento Confirmado!</h3>
+      <p>Seu horário foi reservado com sucesso.</p>
+      <div class="modal-details" id="modalDetails"></div>
+      <div class="modal-buttons">
+        <button class="btn btn-outline" onclick="closeModal()">Fechar</button>
+        <a href="#" class="btn btn-whatsapp" id="modalWhatsApp" target="_blank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Confirmar via WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- JS -->
+  <script src="js/app.js"></script>
+</body>
+</html>
