@@ -136,27 +136,14 @@ function initSmoothScroll() {
 
 // ========== LOAD SERVICES ==========
 async function loadServices() {
-  const fallbackServices = [
-    { id: 1, name: 'Remoção de Tatuagem', description: 'Remoção segura e eficaz de tatuagens com tecnologia avançada a laser, proporcionando resultados graduais e naturais.', duration: 60 },
-    { id: 2, name: 'Lash Lifting', description: 'Curvatura natural e duradoura para os cílios, realçando o olhar sem necessidade de extensões.', duration: 45 },
-    { id: 3, name: 'Brow Lamination', description: 'Alinhamento e modelagem das sobrancelhas para um visual preenchido, definido e sofisticado.', duration: 45 },
-    { id: 4, name: 'Micropigmentação', description: 'Técnica de pigmentação semipermanente para sobrancelhas, lábios e olhos com resultado natural e duradouro.', duration: 90 },
-    { id: 5, name: 'Procedimentos Estéticos', description: 'Tratamentos personalizados para valorizar sua beleza natural com segurança e excelência profissional.', duration: 60 }
-  ];
-
   try {
     const res = await fetch(`${CONFIG.apiBase}/services`);
     if (!res.ok) throw new Error('API returned ' + res.status);
     state.services = await res.json();
-    if (!Array.isArray(state.services) || state.services.length === 0) {
-      // fallback if API returns empty
-      state.services = fallbackServices;
-      showToast('API retornou sem serviços — mostrando exemplo local.', 'info');
-    }
   } catch (err) {
-    console.warn('loadServices failed, using fallback:', err);
-    state.services = fallbackServices;
-    showToast('Não foi possível carregar serviços do servidor — modo demonstração ativo.', 'warning');
+    console.error('Error loading services:', err);
+    state.services = []; // do not use fallbacks — reflect server state
+    showToast('Erro ao carregar serviços do servidor.', 'error');
   } finally {
     renderServices();
     populateServiceSelect();
@@ -222,23 +209,14 @@ function selectServiceAndScroll(serviceId) {
 
 // ========== LOAD INTERNATIONAL DATES ==========
 async function loadInternationalDates() {
-  const fallbackIntl = [
-    { id: 1, country_code: 'NL', country_name: 'Holanda', flag_emoji: '🇳🇱', start_date: '2026-05-05', end_date: '2026-05-10', city: 'Amsterdam' },
-    { id: 2, country_code: 'ES', country_name: 'Espanha', flag_emoji: '🇪🇸', start_date: '2026-06-20', end_date: '2026-06-25', city: 'Madrid' }
-  ];
-
   try {
     const res = await fetch(`${CONFIG.apiBase}/international-dates`);
     if (!res.ok) throw new Error('API returned ' + res.status);
     state.internationalDates = await res.json();
-    if (!Array.isArray(state.internationalDates) || state.internationalDates.length === 0) {
-      state.internationalDates = fallbackIntl;
-      showToast('Nenhuma data internacional ativa no servidor — mostrando exemplos.', 'info');
-    }
   } catch (err) {
-    console.warn('loadInternationalDates failed, using fallback:', err);
-    state.internationalDates = fallbackIntl;
-    showToast('Não foi possível carregar agenda internacional — modo demonstração ativo.', 'warning');
+    console.error('Error loading international dates:', err);
+    state.internationalDates = []; // do not show demo data
+    showToast('Erro ao carregar agenda internacional do servidor.', 'error');
   } finally {
     renderInternationalDates();
   }
