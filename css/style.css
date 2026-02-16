@@ -1701,6 +1701,14 @@ ul { list-style: none; }
         .hero-buttons {
           gap: 0.5rem;
         }
+
+        /* Ajustes específicos do calendário e booking para caber na tela */
+        .booking-form-wrapper { padding: 1rem; }
+        .calendar-grid { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
+        .calendar-day, .calendar-day-header { flex: 0 0 52px; min-width: 52px; aspect-ratio: 1; }
+        .calendar-container { overflow: visible; }
+        .time-slots { grid-template-columns: repeat(2, 1fr); }
+        .time-slot { min-width: 0; }
         .hero-buttons .btn-lg {
           padding: 0.7rem 1.2rem;
           font-size: 0.85rem;
