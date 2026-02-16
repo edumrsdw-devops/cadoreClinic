@@ -1791,8 +1791,9 @@ ul { list-style: none; }
         .calendar-day-header { font-size: 0.65rem; padding: 0.25rem 0; }
         .calendar-day { aspect-ratio: 1; min-height: 36px; padding: 0.3rem 0.2rem; font-size: 0.78rem; }
         .calendar-container { overflow: visible; }
-        .time-slots { grid-template-columns: repeat(2, 1fr); }
-        .time-slot { min-width: 0; }
+        /* manter o mesmo layout de 4 colunas do desktop conforme solicitado */
+        .time-slots { grid-template-columns: repeat(4, 1fr); }
+        .time-slot { min-width: 0; padding: 0.6rem; font-size: 0.85rem; }
         .hero-buttons .btn-lg {
           padding: 0.7rem 1.2rem;
           font-size: 0.85rem;
