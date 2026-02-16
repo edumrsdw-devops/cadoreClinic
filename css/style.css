@@ -1128,7 +1128,7 @@ ul { list-style: none; }
 }
 
 @media (max-width: 480px) {
-  .time-slots { grid-template-columns: repeat(2, 1fr); }
+  .time-slots { grid-template-columns: repeat(4, 1fr); }
   .time-slots-collapse.open { max-height: 520px; }
 }
 
