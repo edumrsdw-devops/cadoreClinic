@@ -1786,9 +1786,10 @@ ul { list-style: none; }
         .booking-wrapper, .booking-form-wrapper { min-width: 0; overflow: visible; box-sizing: border-box; }
         .booking-form-wrapper { padding: 1rem; }
         .booking-form-wrapper * { min-width: 0; max-width: 100%; box-sizing: border-box; }
-        .calendar-grid { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; -webkit-overflow-scrolling: touch; }
-        .calendar-day, .calendar-day-header { flex: 0 0 52px; min-width: 52px; aspect-ratio: 1; }
-        .calendar-day, .calendar-day-header { flex: 0 0 52px; min-width: 52px; aspect-ratio: 1; }
+        /* mobile: render a normal 7-column calendar grid */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding-bottom: 0; }
+        .calendar-day-header { font-size: 0.65rem; padding: 0.25rem 0; }
+        .calendar-day { aspect-ratio: 1; min-height: 36px; padding: 0.3rem 0.2rem; font-size: 0.78rem; }
         .calendar-container { overflow: visible; }
         .time-slots { grid-template-columns: repeat(2, 1fr); }
         .time-slot { min-width: 0; }
