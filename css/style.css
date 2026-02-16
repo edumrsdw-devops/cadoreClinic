@@ -1237,19 +1237,20 @@ ul { list-style: none; }
 /* fallback textual code (hidden by default) */
 .intl-flag-code {
   display: none;
-  font-size: 0.95rem;
+  /* use the same typographic style as desktop country name */
   font-family: var(--font-heading);
-  font-weight: 600;
-  color: var(--color-gray-dark);
+  font-weight: 400;
+  font-size: 1.3rem;
+  color: var(--color-secondary);
   margin-left: 0.35rem;
   vertical-align: middle;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
 }
 
 @media (max-width: 480px) {
-  /* hide emoji flag on mobile and show code instead */
+  /* hide emoji flag on mobile and show country-code with desktop font */
   .intl-flag { display: none; }
-  .intl-flag-code { display: inline-block; font-size: 1rem; }
+  .intl-flag-code { display: inline-block; font-size: 1.3rem; }
 }
 
 .intl-country {
