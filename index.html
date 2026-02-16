@@ -223,6 +223,12 @@
                 </button>
               </div>
               <div class="calendar-grid" id="calendarGrid"></div>
+
+              <!-- manual refresh / fallback for mobile users -->
+              <div style="display:flex;gap:0.5rem;margin-top:0.75rem;align-items:center">
+                <button class="btn btn-outline btn-sm" onclick="refreshSlots()">Mostrar horários</button>
+                <div id="slotsStatus" style="font-size:0.9rem;color:var(--color-gray);">&nbsp;</div>
+              </div>
             </div>
             
             <div id="timeSlotsContainer" class="time-slots-collapse" aria-hidden="true">

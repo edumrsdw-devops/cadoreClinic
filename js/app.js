@@ -392,7 +392,11 @@ async function selectDate(dateStr) {
   const container = document.getElementById('timeSlotsContainer');
   const slotsEl = document.getElementById('timeSlots');
   const intlInfo = document.getElementById('intlInfo');
+  const slotsStatus = document.getElementById('slotsStatus');
   
+  // UI: show status
+  if (slotsStatus) slotsStatus.textContent = 'Carregando...';
+
   // open the collapsible time-slots panel with animation
   container.classList.add('open');
   container.setAttribute('aria-hidden', 'false');
@@ -409,16 +413,25 @@ async function selectDate(dateStr) {
       intlInfo.innerHTML = `${data.international.flag_emoji} Atendimento em <strong>${data.international.country_name}</strong>${data.international.city ? ` — ${data.international.city}` : ''}`;
     }
     
-    if (data.slots.length === 0) {
-      slotsEl.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--color-gray);font-size:0.9rem">${data.message || 'Nenhum horário disponível nesta data'}</p>`;
+    if (!data || !Array.isArray(data.slots) || data.slots.length === 0) {
+      slotsEl.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--color-gray);font-size:0.9rem">${(data && data.message) || 'Nenhum horário disponível nesta data'}</p>`;
+      if (slotsStatus) slotsStatus.textContent = 'Nenhum horário disponível';
     } else {
       slotsEl.innerHTML = data.slots.map(slot => `
         <div class="time-slot" tabindex="0" onclick="selectTime('${slot}', this)" onkeydown="if(event.key==='Enter'||event.key===' ') selectTime('${slot}', this)">${slot}</div>
       `).join('');
+      if (slotsStatus) slotsStatus.textContent = `${data.slots.length} horários disponíveis`;
     }
   } catch (err) {
     slotsEl.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--color-error)">Erro ao carregar horários</p>';
+    if (slotsStatus) slotsStatus.textContent = 'Erro ao carregar horários';
   }
+}
+
+// manual refresh helper (used by "Mostrar horários")
+function refreshSlots() {
+  const date = state.selectedDate || formatDateISO(new Date());
+  selectDate(date);
 }
 
 function selectTime(time, el) {

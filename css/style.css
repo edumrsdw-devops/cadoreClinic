@@ -995,7 +995,7 @@ ul { list-style: none; }
 .calendar-container {
   margin-bottom: 1.5rem;
   position: relative;
-  z-index: 6; /* ensure calendar sits above overlapping elements */
+  z-index: 50; /* ensure calendar sits above overlapping elements */
   pointer-events: auto;
 }
 
