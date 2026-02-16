@@ -307,7 +307,7 @@ function goToIntlBooking(startDate, endDate) {
   }
   
   // Show a toast
-  showToast('📅 Calendário posicionado nas datas internacionais!', 'info');
+  showToast('Calendário posicionado nas datas internacionais.', 'info');
 }
 
 // ========== CALENDAR ==========
@@ -658,9 +658,22 @@ function showToast(message, type = 'info') {
   const container = document.getElementById('toastContainer');
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.textContent = message;
+  toast.setAttribute('role', 'status');
+  toast.setAttribute('aria-live', 'polite');
+
+  // Elegant 'info' toast includes a subtle icon and typographic treatment
+  if (type === 'info') {
+    toast.innerHTML = `
+      <span class="toast-icon" aria-hidden="true">\n        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x="16" y="2" x="16" y="6"/><line x="8" y="2" x="8" y="6"/><line x="3" y="10" x="21" y="10"/></svg>
+      </span>
+      <span class="toast-message">${String(message)}</span>
+    `;
+  } else {
+    toast.textContent = message;
+  }
+
   container.appendChild(toast);
-  
+
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateX(100px)';
