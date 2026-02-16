@@ -6,7 +6,8 @@
 const CONFIG = {
   whatsappNumber: '5562999999999', // Replace with real WhatsApp number
   clinicName: 'Cadore Clinic',
-  apiBase: 'http://localhost:3000/api'
+  // use relative API base so mobile devices and deployed environments work correctly
+  apiBase: '/api'
 };
 
 // ========== STATE ==========

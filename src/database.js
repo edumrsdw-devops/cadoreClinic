@@ -145,6 +145,15 @@ function seedData() {
       stmt.run(h.day, h.start, h.end, h.active);
     }
   }
+
+  // Seed a few international dates so they appear immediately in the public site
+  const intlCount = db.prepare('SELECT COUNT(*) as count FROM international_dates').get();
+  if (intlCount.count === 0) {
+    const ins = db.prepare('INSERT INTO international_dates (country_code, country_name, flag_emoji, start_date, end_date, city, active) VALUES (?, ?, ?, ?, ?, ?, ?)');
+    ins.run('PT', 'Portugal', '🇵🇹', '2026-04-10', '2026-04-15', 'Lisboa', 1);
+    ins.run('NL', 'Holanda', '🇳🇱', '2026-05-05', '2026-05-10', 'Amsterdam', 1);
+    ins.run('ES', 'Espanha', '🇪🇸', '2026-06-20', '2026-06-25', 'Madrid', 1);
+  }
 }
 
 seedData();
