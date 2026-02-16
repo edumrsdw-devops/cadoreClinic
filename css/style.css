@@ -1111,6 +1111,27 @@ ul { list-style: none; }
   margin-top: 1rem;
 }
 
+/* Collapsible animation for time-slots container */
+.time-slots-collapse {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 360ms cubic-bezier(.22,.9,.31,1), opacity 220ms ease, transform 320ms ease;
+  transform-origin: top;
+  transform: translateY(-6px);
+}
+.time-slots-collapse.open {
+  max-height: 720px; /* suficiente para armazenar horários */
+  opacity: 1;
+  transform: translateY(0);
+  margin-top: 1rem;
+}
+
+@media (max-width: 480px) {
+  .time-slots { grid-template-columns: repeat(2, 1fr); }
+  .time-slots-collapse.open { max-height: 520px; }
+}
+
 .time-slot {
   padding: 0.6rem;
   text-align: center;

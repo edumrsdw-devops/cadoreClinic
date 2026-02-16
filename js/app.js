@@ -376,7 +376,8 @@ function changeMonth(dir) {
   }
   state.selectedDate = null;
   state.selectedTime = null;
-  document.getElementById('timeSlotsContainer').style.display = 'none';
+  document.getElementById('timeSlotsContainer').classList.remove('open');
+  document.getElementById('timeSlotsContainer').setAttribute('aria-hidden', 'true');
   document.getElementById('btnStep2').disabled = true;
   renderCalendar();
 }
@@ -392,7 +393,9 @@ async function selectDate(dateStr) {
   const slotsEl = document.getElementById('timeSlots');
   const intlInfo = document.getElementById('intlInfo');
   
-  container.style.display = 'block';
+  // open the collapsible time-slots panel with animation
+  container.classList.add('open');
+  container.setAttribute('aria-hidden', 'false');
   slotsEl.innerHTML = '<div class="spinner"></div>';
   intlInfo.style.display = 'none';
   
