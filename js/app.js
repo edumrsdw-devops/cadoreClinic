@@ -200,8 +200,17 @@ function populateServiceSelect() {
 }
 
 function selectServiceAndScroll(serviceId) {
-  document.getElementById('bookingService').value = serviceId;
+  const select = document.getElementById('bookingService');
+  if (select) select.value = serviceId;
   state.selectedService = serviceId;
+
+  // ensure booking section is visible on mobile and desktop
+  const bookingSection = document.getElementById('booking');
+  if (bookingSection) {
+    bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  showToast('Serviço pré-selecionado — prossiga para escolher data e horário.', 'success');
 }
 
 // ========== LOAD INTERNATIONAL DATES ==========
