@@ -1,3 +1,9 @@
+/* Deixa o 'Clinic' da logo em letra fina */
+.logo-thin {
+  font-weight: 300;
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+}
 /* ============================================
    CADORE CLINIC - Premium Aesthetic Clinic
    ============================================ */
@@ -48,6 +54,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: var(--header-height);
   font-size: 16px;
   overflow-x: hidden;
 }
@@ -243,7 +250,17 @@ ul { list-style: none; }
 
 .header.scrolled .logo-text { color: var(--color-primary); }
 .header.scrolled .burger-toggle span { background: var(--color-secondary); }
-.header.scrolled .header-cta { border-color: var(--color-primary); color: var(--color-primary); }
+.header.scrolled .header-cta {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-white);
+}
+
+.header.scrolled .header-cta:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+  border-color: var(--color-primary);
+}
 
 .nav {
   display: flex;
@@ -264,7 +281,7 @@ ul { list-style: none; }
   align-items: center;
 }
 
-.logo-text {
+ .logo-text {
   font-family: var(--font-heading);
   font-size: 1.8rem;
   font-weight: 600;
@@ -272,6 +289,10 @@ ul { list-style: none; }
   color: var(--color-white);
   transition: var(--transition);
   white-space: nowrap;
+}
+
+ .logo-text span {
+  margin-left: 0; /* Junta completamente 'Cadore' e 'Clinic' */
 }
 
 .logo-text span {
@@ -1555,7 +1576,7 @@ ul { list-style: none; }
 
   .side-menu {
     width: 100%;
-    max-width: 100vw;
+    max-width: 100%;
   }
 
   .logo-text {
@@ -1611,6 +1632,94 @@ ul { list-style: none; }
 }
 
 @media (max-width: 480px) {
+          .hero { min-height: 420px; }
+          .container {
+            padding: 0 1.1rem;
+            max-width: 100%;
+            box-sizing: border-box;
+          }
+          .section {
+            padding: 2.2rem 0 1.5rem 0;
+            text-align: center;
+          }
+          .about-grid,
+          .booking-wrapper {
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+            gap: 0.7rem;
+          }
+          .booking-info {
+            padding: 1rem 0.7rem;
+            font-size: 1.05rem;
+            border-radius: 0;
+            text-align: left;
+          }
+          .hero-content {
+            padding: 0 1.1rem;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+          }
+          .hero-title, .hero-subtitle, .hero-label {
+            text-align: center;
+            word-break: break-word;
+          }
+          p, .section-header p, .booking-info p {
+            font-size: 1.08rem;
+            line-height: 1.6;
+            word-break: break-word;
+            margin-bottom: 1.1rem;
+          }
+          .section {
+            padding: 2.2rem 0 1.5rem 0;
+          }
+          .about-grid,
+          .booking-wrapper {
+            width: 100%;
+            max-width: 100%;
+            margin-left: 0;
+            margin-right: 0;
+            border-radius: 0;
+            box-shadow: none;
+            gap: 0.7rem;
+          }
+          .booking-info {
+            padding: 0.7rem;
+            font-size: 0.98rem;
+            border-radius: 0;
+          }
+          .hero-content {
+            padding: 0 1.1rem;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+          }
+        .hero-buttons {
+          gap: 0.5rem;
+        }
+        .hero-buttons .btn-lg {
+          padding: 0.7rem 1.2rem;
+          font-size: 0.85rem;
+        }
+      .booking-wrapper {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        box-shadow: none;
+        gap: 1.2rem;
+      }
+      .booking-info {
+        padding: 1.2rem;
+        border-radius: 0;
+      }
+    .header-cta {
+      font-size: 0.5rem;
+      padding: 0.35rem 0.7rem;
+    }
   .hero-title { font-size: 2.2rem; }
   .hero-buttons { flex-direction: column; width: 100%; }
   .hero-buttons .btn { width: 100%; }
