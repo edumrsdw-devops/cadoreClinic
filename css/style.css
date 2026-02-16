@@ -1814,8 +1814,8 @@ ul { list-style: none; }
       .booking-wrapper {
         width: 100%;
         margin: 0;
-        border-radius: 0;
-        box-shadow: none;
+        border-radius: var(--border-radius-lg); /* mais arredondado no mobile */
+        box-shadow: var(--shadow-lg);
         gap: 1.2rem;
       }
       .booking-info {
