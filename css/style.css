@@ -1237,20 +1237,32 @@ ul { list-style: none; }
 /* fallback textual code (hidden by default) */
 .intl-flag-code {
   display: none;
-  /* use the same typographic style as desktop country name */
+  /* match desktop country-name typography and inherit color from context */
   font-family: var(--font-heading);
   font-weight: 400;
   font-size: 1.3rem;
-  color: var(--color-secondary);
+  color: inherit;
   margin-left: 0.35rem;
   vertical-align: middle;
   letter-spacing: 0.02em;
 }
 
+/* calendar small code (over days) - inherit color and smaller size */
+.calendar-day .intl-flag-code {
+  display: none;
+  position: absolute;
+  right: 6px;
+  bottom: 4px;
+  font-size: 0.65rem;
+  color: inherit;
+  font-weight: 600;
+}
+
 @media (max-width: 480px) {
-  /* hide emoji flag on mobile and show country-code with desktop font */
+  /* hide emoji flag on mobile and show country-code with desktop font/color */
   .intl-flag { display: none; }
-  .intl-flag-code { display: inline-block; font-size: 1.3rem; }
+  .intl-flag-code { display: inline-block; font-size: 1.3rem; color: inherit; }
+  .calendar-day .intl-flag-code { display: inline-block; }
 }
 
 .intl-country {
