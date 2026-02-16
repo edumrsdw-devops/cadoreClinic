@@ -210,6 +210,13 @@ function selectServiceAndScroll(serviceId) {
     bookingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  // Move to step 2 and focus calendar so user can pick date immediately
+  bookingNextStep(2);
+  setTimeout(() => {
+    const firstDay = document.querySelector('#calendarGrid .calendar-day:not(.empty):not(.disabled)');
+    if (firstDay) { firstDay.scrollIntoView({ behavior: 'smooth', block: 'center' }); firstDay.focus(); }
+  }, 350);
+
   showToast('Serviço pré-selecionado — prossiga para escolher data e horário.', 'success');
 }
 
@@ -348,7 +355,7 @@ function renderCalendar() {
     if (isSelected) classes += ' selected';
     
     html += `
-      <div class="${classes}" ${isPast ? '' : `onclick="selectDate('${dateStr}')"`}>
+      <div class="${classes}" ${isPast ? '' : `onclick="selectDate('${dateStr}')" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') selectDate('${dateStr}')"`}>
         ${day}
         ${intlEvent ? `<span class="intl-flag">${intlEvent.flag_emoji}</span><span class="intl-flag-code">${intlEvent.country_code}</span>` : ''}
       </div>
@@ -403,7 +410,7 @@ async function selectDate(dateStr) {
       slotsEl.innerHTML = `<p style="grid-column:1/-1;text-align:center;color:var(--color-gray);font-size:0.9rem">${data.message || 'Nenhum horário disponível nesta data'}</p>`;
     } else {
       slotsEl.innerHTML = data.slots.map(slot => `
-        <div class="time-slot" onclick="selectTime('${slot}', this)">${slot}</div>
+        <div class="time-slot" tabindex="0" onclick="selectTime('${slot}', this)" onkeydown="if(event.key==='Enter'||event.key===' ') selectTime('${slot}', this)">${slot}</div>
       `).join('');
     }
   } catch (err) {
