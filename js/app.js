@@ -256,6 +256,7 @@ function renderInternationalDates() {
     return `
       <div class="intl-card intl-card-clickable" onclick="goToIntlBooking('${d.start_date}', '${d.end_date}')" title="Clique para agendar">
         <div class="intl-flag">${d.flag_emoji}</div>
+        <span class="intl-flag-code">${d.country_code}</span>
         <div class="intl-country">${d.country_name}</div>
         ${d.city ? `<div class="intl-city">${d.city}</div>` : ''}
         <div class="intl-dates">${start} — ${end}</div>
@@ -349,7 +350,7 @@ function renderCalendar() {
     html += `
       <div class="${classes}" ${isPast ? '' : `onclick="selectDate('${dateStr}')"`}>
         ${day}
-        ${intlEvent ? `<span class="intl-flag">${intlEvent.flag_emoji}</span>` : ''}
+        ${intlEvent ? `<span class="intl-flag">${intlEvent.flag_emoji}</span><span class="intl-flag-code">${intlEvent.country_code}</span>` : ''}
       </div>
     `;
   }

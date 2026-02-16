@@ -1206,16 +1206,19 @@ ul { list-style: none; }
 /* fallback textual code (hidden by default) */
 .intl-flag-code {
   display: none;
-  font-size: 0.85rem;
-  color: var(--color-gray);
+  font-size: 0.95rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-gray-dark);
   margin-left: 0.35rem;
   vertical-align: middle;
+  letter-spacing: 0.08em;
 }
 
 @media (max-width: 480px) {
-  .intl-flag { font-size: 2.1rem; }
-  /* show country code as extra hint on very small devices */
-  .intl-flag-code { display: inline-block; }
+  /* hide emoji flag on mobile and show code instead */
+  .intl-flag { display: none; }
+  .intl-flag-code { display: inline-block; font-size: 1rem; }
 }
 
 .intl-country {
