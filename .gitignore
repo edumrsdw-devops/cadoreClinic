@@ -1,0 +1,17 @@
+# Node
+node_modules/
+npm-debug.log
+.env
+.DS_Store
+
+# Database
+/data/clinic.db
+data/*.db
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/

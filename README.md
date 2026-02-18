@@ -86,18 +86,49 @@ const CONFIG = {
 };
 ```
 
-## 🌐 Deploy / Hospedagem
+## 🌐 Deploy / Hospedagem (Hostinger)
 
-O projeto está pronto para hospedagem. Opções recomendadas:
-- **VPS** (DigitalOcean, Contabo, etc.) com Node.js
-- **Railway** / **Render** — deploy direto com Git
-- **Vercel** (frontend) + API separada
+Este projeto roda como **aplicação Node.js** (Express) e usa **SQLite** (`data/clinic.db`). A melhor opção na Hostinger é usar um plano que suporte Node.js (Cloud ou VPS). Abaixo estão os passos práticos para deixar o site rodando 100% no Hostinger.
 
-Para produção, configure:
-1. Variáveis de ambiente (PORT)
-2. Número real do WhatsApp
-3. Domínio e SSL (HTTPS)
-4. Altere a senha do admin
+### 1) Preparar repositório (feito automaticamente)
+- Ignoramos `data/clinic.db` com `.gitignore` (não commitaremos o DB local).
+- `npm start` já inicia o servidor (`src/server.js`).
+- O projeto já cria/seed do DB automaticamente se estiver vazio.
+
+> Importante: se tiver dados atuais no `data/clinic.db`, faça backup antes de desrastrear (ex.: baixe via FTP/SSH).
+
+### 2) Passo-a-passo no hPanel (Hostinger — Node.js App)
+1. Em **Hosting → Advanced → Node.js**, clique em **Create Application**.
+2. Escolha a versão do Node (recomendo >=16).
+3. Em **Application root** aponte para a pasta do projeto (ex.: `/home/usuario/cadore-clinic`).
+4. Em **Startup file / Command** use: `npm start` (ou `node src/server.js`).
+5. Clique para instalar dependências (ou conecte via SSH e rode `npm install --production`).
+6. Start / Restart a aplicação pelo painel.
+7. Configure o domínio no **Domains** e aponte o DNS (A record) para a Hostinger.
+8. Ative SSL (Let's Encrypt) no hPanel para HTTPS.
+
+### 3) Permissões & banco SQLite
+- Garanta que a pasta `data/` seja gravável pelo processo Node (`chmod 755 data`).
+- Backup do DB: baixe `data/clinic.db` periodicamente (FTP/SSH) ou configure cópias regulares.
+- Se preferir banco gerenciado (MySQL), será necessário adaptar o código (trocar driver `better-sqlite3`).
+
+### 4) Testes e produção
+- Execute localmente: `npm install && npm start` e verifique `/admin`.
+- Em produção, defina `NODE_ENV=production` no hPanel (opcional) e confirme que `PORT` está configurado pelo Hostinger.
+
+### 5) Alternativa (VPS) — usar PM2
+- Instale Node.js e PM2: `npm i -g pm2`
+- Iniciar: `pm2 start npm --name cadore-clinic -- start`
+- Persistir: `pm2 save` + `pm2 startup`
+
+---
+
+### Checklist rápido antes do deploy ✅
+- [ ] Plano Hostinger suporta Node.js (Cloud/VPS)
+- [ ] Fazer backup de `data/clinic.db`
+- [ ] Atualizar `public/js/app.js` com número de WhatsApp real
+- [ ] Alterar senha admin após o primeiro login
+- [ ] Apontar domínio e ativar SSL
 
 ---
 
