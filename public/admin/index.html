@@ -104,6 +104,10 @@
     .data-table tr:hover { background:var(--offwhite); }
     .data-table tr:last-child td { border-bottom:none; }
 
+    /* admin: show country code instead of emoji */
+    .admin-country-code { font-family: Arial, sans-serif; font-weight:700; font-size:0.95rem; margin-right:0.5rem; display:inline-block; }
+
+
     .status-badge { display:inline-block; padding:3px 10px; border-radius:12px; font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.05em; }
     .status-confirmed { background:#E8F5E9; color:#2E7D32; }
     .status-cancelled { background:#FFEBEE; color:#C62828; }
@@ -774,7 +778,7 @@
 
         tbody.innerHTML = dates.map(d => `
           <tr>
-            <td>${d.flag_emoji} ${d.country_name}</td>
+            <td><span class="admin-country-code">${d.country_code}</span> ${d.country_name}</td>
             <td>${d.city || '-'}</td>
             <td>${formatDate(d.start_date)} — ${formatDate(d.end_date)}</td>
             <td><span class="status-badge ${d.active ? 'status-confirmed' : 'status-cancelled'}">${d.active ? 'Ativo' : 'Inativo'}</span></td>

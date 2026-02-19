@@ -1225,21 +1225,16 @@ ul { list-style: none; }
 }
 
 .intl-flag {
-  font-size: 2.5rem;
-  margin-bottom: 0.8rem;
-  line-height: 1;
-  display: inline-block;
-  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Segoe UI Symbol", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+  /* remove emoji usage entirely — show country code instead */
+  display: none;
 }
 
-/* fallback textual code (hidden by default) */
+/* textual country-code shown across desktop & mobile */
 .intl-flag-code {
-  display: none;
-  /* match desktop country-name typography and inherit color from context */
-  font-family: var(--font-heading);
-  font-weight: 400;
+  display: inline-block;
+  /* use Arial as requested */
+  font-family: Arial, sans-serif;
+  font-weight: 600;
   font-size: 1.3rem;
   color: inherit;
   margin-left: 0.35rem;
@@ -1249,27 +1244,34 @@ ul { list-style: none; }
 
 /* calendar small code (over days) - inherit color and smaller size */
 .calendar-day .intl-flag-code {
-  display: none;
+  display: inline-block;
   position: absolute;
   right: 6px;
   bottom: 4px;
   font-size: 0.65rem;
   color: inherit;
-  font-weight: 600;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
 }
 
-@media (max-width: 480px) {
-  /* hide emoji flag on mobile and show country-code with desktop font/color */
-  .intl-flag { display: none; }
-  .intl-flag-code { display: inline-block; font-size: 1.3rem; color: inherit; }
-  .calendar-day .intl-flag-code { display: inline-block; }
-}
 
 .intl-country {
   font-family: var(--font-heading);
   font-size: 1.3rem;
   margin-bottom: 0.3rem;
 }
+
+/* larger textual country-code for cards */
+.intl-flag-large {
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: inherit;
+  margin-bottom: 0.35rem;
+}
+
+/* small calendar code style */
+.calendar-intl-code { font-family: Arial, sans-serif; font-weight:700; }
 
 .intl-city {
   font-size: 0.85rem;

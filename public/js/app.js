@@ -265,8 +265,7 @@ function renderInternationalDates() {
     const end = formatDateBR(d.end_date);
     return `
       <div class="intl-card intl-card-clickable" onclick="goToIntlBooking('${d.start_date}', '${d.end_date}')" title="Clique para agendar">
-        <div class="intl-flag">${d.flag_emoji}</div>
-        <span class="intl-flag-code">${d.country_code}</span>
+        <div class="intl-flag-code intl-flag-large">${d.country_code}</div>
         <div class="intl-country">${d.country_name}</div>
         ${d.city ? `<div class="intl-city">${d.city}</div>` : ''}
         <div class="intl-dates">${start} — ${end}</div>
@@ -278,6 +277,8 @@ function renderInternationalDates() {
     `;
   }).join('');
 }
+
+
 
 // ========== MAP (load dynamic map config from API) ==========
 async function loadMap() {
@@ -380,7 +381,7 @@ function renderCalendar() {
     html += `
       <div class="${classes}" ${isPast ? '' : `onclick="selectDate('${dateStr}')" tabindex="0" onkeydown="if(event.key==='Enter'||event.key===' ') selectDate('${dateStr}')"`}>
         ${day}
-        ${intlEvent ? `<span class="intl-flag">${intlEvent.flag_emoji}</span><span class="intl-flag-code">${intlEvent.country_code}</span>` : ''}
+        ${intlEvent ? `<span class="intl-flag-code calendar-intl-code">${intlEvent.country_code}</span>` : ''}
       </div>
     `;
   }
@@ -434,7 +435,7 @@ async function selectDate(dateStr) {
     
     if (data && data.international) {
       intlInfo.style.display = 'block';
-      intlInfo.innerHTML = `${data.international.flag_emoji} Atendimento em <strong>${data.international.country_name}</strong>${data.international.city ? ` — ${data.international.city}` : ''}`;
+      intlInfo.innerHTML = `<span class="intl-flag-code">${data.international.country_code}</span> Atendimento em <strong>${data.international.country_name}</strong>${data.international.city ? ` — ${data.international.city}` : ''}`;
     }
     
     if (!data || !Array.isArray(data.slots) || data.slots.length === 0) {
