@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initSmoothScroll();
   loadServices();
   loadInternationalDates();
+  loadMap();
   initCalendar();
   initContactForm();
   initWhatsAppLinks();
@@ -276,6 +277,26 @@ function renderInternationalDates() {
       </div>
     `;
   }).join('');
+}
+
+// ========== MAP (load dynamic map config from API) ==========
+async function loadMap() {
+  try {
+    const res = await fetch('/api/map');
+    if (!res.ok) throw new Error('map API error');
+    const data = await res.json();
+    const iframe = document.getElementById('mainMap');
+    const addressEl = document.getElementById('clinicAddress');
+    const lat = data.lat;
+    const lng = data.lng;
+    const zoom = data.zoom || 13;
+    if (iframe) iframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`;
+    if (addressEl && data.label) addressEl.innerHTML = data.label;
+  } catch (err) {
+    console.warn('loadMap failed, using default', err);
+    const iframe = document.getElementById('mainMap');
+    if (iframe && !iframe.src) iframe.src = 'https://maps.google.com/maps?q=-16.7074,-49.2624&z=13&output=embed';
+  }
 }
 
 // ========== GO TO INTERNATIONAL BOOKING ==========

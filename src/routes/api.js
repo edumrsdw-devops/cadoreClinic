@@ -89,6 +89,18 @@ router.get('/international-dates', (req, res) => {
   }
 });
 
+// ========== MAP LOCATION (Public) ==========
+router.get('/map', (req, res) => {
+  try {
+    const row = db.prepare('SELECT value FROM settings WHERE key = ?').get('map');
+    if (row) return res.json(JSON.parse(row.value));
+    return res.json({ lat: -16.7074, lng: -49.2624, label: 'Setor Bueno, Goiânia, Brasil', zoom: 13 });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao buscar configuração de mapa' });
+  }
+});
+
 // ========== CREATE APPOINTMENT ==========
 router.post('/appointments', (req, res) => {
   try {

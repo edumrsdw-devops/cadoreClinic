@@ -228,6 +228,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           Serviços
         </div>
+        <div class="sidebar-nav-item" data-page="location" onclick="showPage('location', this)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 6-9 12-9 12S3 16 3 10a9 9 0 1118 0z"/><circle cx="12" cy="10" r="2"/></svg>
+          Localização
+        </div>
         <div class="sidebar-nav-item" data-page="messages" onclick="showPage('messages', this)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
           Mensagens
@@ -396,6 +400,40 @@
           </div>
         </div>
 
+        <!-- ===== Localização (Mapa) ===== -->
+        <div class="page-section" id="pageLocation">
+          <div class="panel">
+            <div class="panel-header"><h3>Localização do Site</h3></div>
+            <div class="panel-body">
+              <form id="mapForm" onsubmit="saveMapSettings(event)">
+                <div class="form-group">
+                  <label>Endereço / Rótulo</label>
+                  <input type="text" id="mapLabel" placeholder="Ex: Setor Bueno — Goiânia" class="form-input">
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label>Latitude</label>
+                    <input type="number" step="0.000001" id="mapLat" class="form-input" required>
+                  </div>
+                  <div class="form-group">
+                    <label>Longitude</label>
+                    <input type="number" step="0.000001" id="mapLng" class="form-input" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Zoom</label>
+                  <input type="number" id="mapZoom" class="form-input" min="1" max="20" value="13">
+                </div>
+                <button class="btn btn-primary" type="submit">Salvar Localização</button>
+              </form>
+
+              <div style="margin-top:1rem">
+                <iframe id="mapPreview" style="width:100%;height:300px;border:0;margin-top:0.5rem" src=""></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- ===== Services ===== -->
         <div class="page-section" id="pageServices">
           <div class="panel">
@@ -536,6 +574,7 @@
       if (page === 'appointments') loadAppointments();
       if (page === 'blocked') loadBlockedTimes();
       if (page === 'international') loadIntlDates();
+      if (page === 'location') loadMapSettings();
       if (page === 'services') loadServices();
       if (page === 'messages') loadMessages();
 

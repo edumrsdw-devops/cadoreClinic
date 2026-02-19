@@ -99,6 +99,11 @@ db.exec(`
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES admin_users(id)
   );
+
+  CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  );
 `);
 
 // Seed default data if empty
@@ -153,6 +158,13 @@ function seedData() {
     ins.run('PT', 'Portugal', '🇵🇹', '2026-04-10', '2026-04-15', 'Lisboa', 1);
     ins.run('NL', 'Holanda', '🇳🇱', '2026-05-05', '2026-05-10', 'Amsterdam', 1);
     ins.run('ES', 'Espanha', '🇪🇸', '2026-06-20', '2026-06-25', 'Madrid', 1);
+  }
+
+  // Seed default map location (used by public map embed)
+  const mapRow = db.prepare("SELECT value FROM settings WHERE key = ?").get('map');
+  if (!mapRow) {
+    const defaultMap = { lat: -16.7074, lng: -49.2624, label: 'Setor Bueno, Goiânia, Brasil', zoom: 13 };
+    db.prepare('INSERT INTO settings (key, value) VALUES (?, ?)').run('map', JSON.stringify(defaultMap));
   }
 }
 

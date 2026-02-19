@@ -204,6 +204,31 @@ router.delete('/international-dates/:id', authMiddleware, (req, res) => {
   }
 });
 
+// ========== MAP SETTINGS (Admin) ==========
+router.get('/map', authMiddleware, (req, res) => {
+  try {
+    const row = db.prepare('SELECT value FROM settings WHERE key = ?').get('map');
+    if (row) return res.json(JSON.parse(row.value));
+    return res.json({ lat: -16.7074, lng: -49.2624, label: 'Setor Bueno, Goiânia, Brasil', zoom: 13 });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao buscar configuração de mapa' });
+  }
+});
+
+router.patch('/map', authMiddleware, (req, res) => {
+  try {
+    const { lat, lng, label, zoom } = req.body;
+    if (typeof lat !== 'number' || typeof lng !== 'number') {
+      return res.status(400).json({ error: 'lat e lng devem ser números' });
+    }
+    const mapObj = { lat: Number(lat), lng: Number(lng), label: label || '', zoom: Number(zoom || 13) };
+    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('map', JSON.stringify(mapObj));
+    res.json({ message: 'Mapa atualizado', map: mapObj });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao atualizar configuração de mapa' });
+  }
+});
+
 // ========== SERVICES MANAGEMENT ==========
 router.get('/services', authMiddleware, (req, res) => {
   try {
