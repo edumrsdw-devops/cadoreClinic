@@ -276,6 +276,39 @@ router.patch('/services/:id', authMiddleware, (req, res) => {
   }
 });
 
+// Delete a service (supports optional cascade to remove linked appointments)
+router.delete('/services/:id', authMiddleware, (req, res) => {
+  try {
+    const id = req.params.id;
+    const cascade = req.query.cascade === '1' || req.query.cascade === 'true';
+
+    const linked = db.prepare('SELECT COUNT(*) as count FROM appointments WHERE service_id = ?').get(id);
+    const linkedCount = linked ? linked.count : 0;
+
+    if (linkedCount > 0 && !cascade) {
+      // tell the client how many linked appointments exist
+      return res.status(409).json({ error: 'Existem agendamentos vinculados a este serviço. Remova-os antes de excluir ou confirme a exclusão em cascata.', linked: linkedCount });
+    }
+
+    // perform cascade delete inside a transaction when requested
+    if (cascade && linkedCount > 0) {
+      const tx = db.transaction((serviceId) => {
+        db.prepare('DELETE FROM appointments WHERE service_id = ?').run(serviceId);
+        db.prepare('DELETE FROM services WHERE id = ?').run(serviceId);
+      });
+      tx(id);
+      return res.json({ message: `Serviço e ${linkedCount} agendamento(s) excluídos` });
+    }
+
+    // no linked appointments or cascade not requested
+    db.prepare('DELETE FROM services WHERE id = ?').run(id);
+    res.json({ message: 'Serviço excluído' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao excluir serviço' });
+  }
+});
+
 // ========== CONTACT MESSAGES ==========
 router.get('/messages', authMiddleware, (req, res) => {
   try {
