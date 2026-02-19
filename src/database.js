@@ -132,7 +132,7 @@ function seedData() {
   const serviceCount = db.prepare('SELECT COUNT(*) as count FROM services').get();
   if (serviceCount.count === 0) {
     const services = [
-      { name: 'Remoção de Tatuagem', description: 'Remoção segura e eficaz de tatuagens com tecnologia avançada a laser, proporcionando resultados graduais e naturais.', duration: 60, price: null, sort: 1, icon: 'tattoo' },
+      { name: 'Remoção de Tatuagem', description: 'Remoção segura e eficaz de tatuagens com tecnologia avançada a laser, proporcionando resultados graduais e naturais.', duration: 60, price: null, sort: 1, icon: 'laser' },
       { name: 'Lash Lifting', description: 'Curvatura natural e duradoura para os cílios, realçando o olhar sem necessidade de extensões.', duration: 45, price: null, sort: 2, icon: 'lash' },
       { name: 'Brow Lamination', description: 'Alinhamento e modelagem das sobrancelhas para um visual preenchido, definido e sofisticado.', duration: 45, price: null, sort: 3, icon: 'brow' },
       { name: 'Micropigmentação', description: 'Técnica de pigmentação semipermanente para sobrancelhas, lábios e olhos com resultado natural e duradouro.', duration: 90, price: null, sort: 4, icon: 'micro' },
@@ -149,7 +149,7 @@ function seedData() {
   try {
     const missing = db.prepare("SELECT id, name FROM services WHERE icon IS NULL OR icon = ''").all();
     const map = {
-      'Remoção de Tatuagem': 'tattoo',
+      'Remoção de Tatuagem': 'laser',
       'Lash Lifting': 'lash',
       'Brow Lamination': 'brow',
       'Micropigmentação': 'micro',

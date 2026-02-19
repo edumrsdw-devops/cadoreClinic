@@ -1,7 +1,7 @@
 const Database = require('better-sqlite3');
 const db = new Database('./data/clinic.db');
 const map = {
-  'Remoção de Tatuagem': 'tattoo',
+  'Remoção de Tatuagem': 'laser',
   'Lash Lifting': 'lash',
   'Brow Lamination': 'brow',
   'Micropigmentação': 'micro',
