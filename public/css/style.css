@@ -776,6 +776,9 @@ ul { list-style: none; }
   text-transform: uppercase;
 }
 
+/* admin SVG in table cell should scale nicely */
+table .svc-icon svg, .svc-icon svg { width:28px; height:28px; display:block; }
+
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }

@@ -455,14 +455,18 @@
               <form id="serviceForm" onsubmit="addService(event)">
                 <div class="form-row">
                   <div class="form-group"><label>Nome *</label><input type="text" id="svcName" required placeholder="Nome do serviço"></div>
-                  <div class="form-group"><label>Ícone</label>
-                    <select id="svcIcon" class="form-input">
-                      <option value="treatment">Padrão</option>
-                      <option value="tattoo">Tatuagem</option>
-                      <option value="lash">Lash Lifting</option>
-                      <option value="brow">Brow Lamination</option>
-                      <option value="micro">Micropigmentação</option>
-                    </select>
+                  <div class="form-group" style="display:flex;gap:0.75rem;align-items:center">
+                    <div style="flex:1">
+                      <label>Ícone</label>
+                      <select id="svcIcon" class="form-input">
+                        <option value="treatment">Padrão</option>
+                        <option value="tattoo">Tatuagem</option>
+                        <option value="lash">Lash Lifting</option>
+                        <option value="brow">Brow Lamination</option>
+                        <option value="micro">Micropigmentação</option>
+                      </select>
+                    </div>
+                    <div id="svcIconPreview" aria-hidden="true" title="Preview do ícone" style="width:56px;height:56px;border-radius:8px;background:rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:center"></div>
                   </div>
                 </div>
                 <div class="form-row">
@@ -957,6 +961,14 @@
     });
 
     // ========== SERVICES ==========
+    const ADMIN_ICONS = {
+      tattoo: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>`,
+      lash: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>`,
+      brow: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2"/><path d="M2 12c1-3 4-6 10-6s9 3 10 6"/></svg>`,
+      micro: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m16 2-4 4-4-4"/><path d="M12 6v6"/><circle cx="12" cy="17" r="5"/></svg>`,
+      treatment: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>`
+    };
+
     async function loadServices() {
       try {
         const res = await fetch(`${API}/services`, { headers: apiHeaders() });
@@ -971,7 +983,7 @@
         tbody.innerHTML = services.map(s => `
           <tr>
             <td><strong>${s.name}</strong><br><small style="color:var(--gray)">${s.description || ''}</small></td>
-            <td><span class="svc-icon">${(s.icon || 'treatment').toUpperCase()}</span></td>
+            <td>${ADMIN_ICONS[s.icon] || ADMIN_ICONS[s.name] || ADMIN_ICONS['treatment']}</td>
             <td>${s.duration} min</td>
             <td><span class="status-badge ${s.active ? 'status-confirmed' : 'status-cancelled'}">${s.active ? 'Ativo' : 'Inativo'}</span></td>
             <td>
@@ -1001,6 +1013,7 @@
           loadServices();
         }
       } catch (err) { showAdminToast('Erro', 'error'); }
+      updateSvcIconPreview();
     }
 
     async function toggleService(id, active) {
@@ -1009,6 +1022,29 @@
         loadServices();
       } catch (err) { showAdminToast('Erro', 'error'); }
     }
+
+    // === service icon preview helper ===
+    function updateSvcIconPreview() {
+      const sel = document.getElementById('svcIcon');
+      const preview = document.getElementById('svcIconPreview');
+      if (!sel || !preview) return;
+      const key = sel.value || 'treatment';
+      preview.innerHTML = ADMIN_ICONS[key] || ADMIN_ICONS['treatment'];
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = document.getElementById('mapSearch');
+      if (s) s.addEventListener('input', debouncedMapSearch);
+      const latEl = document.getElementById('mapLat');
+      const lngEl = document.getElementById('mapLng');
+      const zoomEl = document.getElementById('mapZoom');
+      if (latEl) latEl.addEventListener('input', updateMapPreview);
+      if (lngEl) lngEl.addEventListener('input', updateMapPreview);
+      if (zoomEl) zoomEl.addEventListener('input', updateMapPreview);
+
+      // wire icon preview
+      const iconSel = document.getElementById('svcIcon');
+      if (iconSel) { iconSel.addEventListener('change', updateSvcIconPreview); updateSvcIconPreview(); }
+    });
 
     // ========== MESSAGES ==========
     async function loadMessages() {
