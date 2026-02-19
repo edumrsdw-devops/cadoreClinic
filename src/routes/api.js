@@ -31,7 +31,7 @@ router.get('/available-slots', (req, res) => {
       if (service) duration = service.duration;
     }
 
-    // Generate time slots
+    // Generate time slots (step 30 minutes) but only those where the full `duration` fits
     const slots = [];
     const [startH, startM] = workingHours.start_time.split(':').map(Number);
     const [endH, endM] = workingHours.end_time.split(':').map(Number);
@@ -41,16 +41,23 @@ router.get('/available-slots', (req, res) => {
     for (let m = startMinutes; m + duration <= endMinutes; m += 30) {
       const hours = Math.floor(m / 60).toString().padStart(2, '0');
       const mins = (m % 60).toString().padStart(2, '0');
-      slots.push(`${hours}:${mins}`);
+      slots.push({ time: `${hours}:${mins}`, start: m, end: m + duration });
     }
 
-    // Remove booked slots
-    const bookedAppointments = db.prepare(
-      'SELECT appointment_time FROM appointments WHERE appointment_date = ? AND status != ?'
+    // Get existing appointments for the day (with their durations)
+    const existingAppts = db.prepare(
+      `SELECT a.appointment_time as time, s.duration as duration
+       FROM appointments a JOIN services s ON a.service_id = s.id
+       WHERE a.appointment_date = ? AND a.status != ?`
     ).all(date, 'cancelled');
-    const bookedTimes = bookedAppointments.map(a => a.appointment_time);
 
-    // Remove blocked times
+    const parsedExisting = existingAppts.map(a => {
+      const [h, mm] = a.time.split(':').map(Number);
+      const start = h * 60 + mm;
+      return { start, end: start + (a.duration || 60) };
+    });
+
+    // Blocked times for the day
     const blockedTimes = db.prepare(
       'SELECT block_time, all_day FROM blocked_times WHERE block_date = ?'
     ).all(date);
@@ -58,9 +65,29 @@ router.get('/available-slots', (req, res) => {
     const isAllDayBlocked = blockedTimes.some(b => b.all_day === 1);
     if (isAllDayBlocked) return res.json({ slots: [], message: 'Este dia está bloqueado' });
 
-    const blockedTimesList = blockedTimes.map(b => b.block_time);
+    const parsedBlocked = blockedTimes.filter(b => b.block_time).map(b => {
+      const [h, mm] = b.block_time.split(':').map(Number);
+      const t = h * 60 + mm;
+      return { start: t, end: t + 1 }; // treat blocked point as forbidden minute
+    });
 
-    const availableSlots = slots.filter(s => !bookedTimes.includes(s) && !blockedTimesList.includes(s));
+    // Helper to check interval overlap
+    const overlaps = (aStart, aEnd, bStart, bEnd) => (aStart < bEnd && bStart < aEnd);
+
+    // Filter out slots that would overlap existing appointments OR blocked times
+    const availableSlots = slots
+      .filter(s => {
+        // if any existing appointment overlaps the candidate interval, exclude
+        for (const ex of parsedExisting) {
+          if (overlaps(s.start, s.end, ex.start, ex.end)) return false;
+        }
+        // if any blocked time falls inside slot interval, exclude
+        for (const bl of parsedBlocked) {
+          if (overlaps(s.start, s.end, bl.start, bl.end)) return false;
+        }
+        return true;
+      })
+      .map(s => s.time);
 
     // Get international location info
     const intlDate = db.prepare(
@@ -110,21 +137,48 @@ router.post('/appointments', (req, res) => {
       return res.status(400).json({ error: 'Preencha todos os campos obrigatórios' });
     }
 
-    // Check if slot is available
-    const existing = db.prepare(
-      'SELECT id FROM appointments WHERE appointment_date = ? AND appointment_time = ? AND status != ?'
-    ).get(appointment_date, appointment_time, 'cancelled');
-
-    if (existing) {
-      return res.status(409).json({ error: 'Este horário já está ocupado' });
+    // Check if slot is available — ensure there is NO overlapping appointment for the requested service duration
+    // Get requested service duration
+    let reqDuration = 60;
+    if (service_id) {
+      const svc = db.prepare('SELECT duration FROM services WHERE id = ?').get(service_id);
+      if (svc && svc.duration) reqDuration = svc.duration;
     }
 
-    // Check blocked times
-    const blocked = db.prepare(
-      'SELECT id FROM blocked_times WHERE block_date = ? AND (all_day = 1 OR block_time = ?)'
-    ).get(appointment_date, appointment_time);
+    const [hReq, mReq] = appointment_time.split(':').map(Number);
+    const reqStart = hReq * 60 + mReq;
+    const reqEnd = reqStart + reqDuration;
 
-    if (blocked) {
+    // check against existing appointments on that date
+    const existingRows = db.prepare(
+      `SELECT a.appointment_time as time, s.duration as duration, a.status
+       FROM appointments a JOIN services s ON a.service_id = s.id
+       WHERE a.appointment_date = ? AND a.status != ?`
+    ).all(appointment_date, 'cancelled');
+
+    const overlapExists = existingRows.some(r => {
+      const [h, mm] = r.time.split(':').map(Number);
+      const start = h * 60 + mm;
+      const end = start + (r.duration || 60);
+      return (reqStart < end && start < reqEnd);
+    });
+
+    if (overlapExists) {
+      return res.status(409).json({ error: 'Este horário conflita com outro agendamento' });
+    }
+
+    // Check blocked times (all day or any blocked minute falls inside the requested interval)
+    const blockedRows = db.prepare('SELECT block_time, all_day FROM blocked_times WHERE block_date = ?').all(appointment_date);
+    if (blockedRows.some(b => b.all_day === 1)) {
+      return res.status(409).json({ error: 'Este dia está bloqueado' });
+    }
+    const blockedConflict = blockedRows.some(b => {
+      if (!b.block_time) return false;
+      const [bh, bm] = b.block_time.split(':').map(Number);
+      const bstart = bh * 60 + bm;
+      return (reqStart <= bstart && bstart < reqEnd);
+    });
+    if (blockedConflict) {
       return res.status(409).json({ error: 'Este horário está bloqueado' });
     }
 
