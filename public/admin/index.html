@@ -157,6 +157,15 @@
     .admin-toast { position:fixed; top:20px; right:20px; padding:0.8rem 1.2rem; border-radius:8px; color:var(--white); font-size:0.85rem; z-index:9999; animation:slideIn 0.3s ease; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
     .admin-toast.success { background:var(--success); }
     .admin-toast.error { background:var(--error); }
+
+    /* modal for viewing appointment notes */
+    .admin-modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.45); display:flex; align-items:center; justify-content:center; z-index:10000; }
+    .admin-modal { background:var(--white); width:min(720px,94%); border-radius:10px; box-shadow:0 12px 40px rgba(0,0,0,0.15); padding:1.25rem; }
+    .admin-modal h4 { margin:0 0 0.5rem; font-family:var(--font-heading); }
+    .admin-modal .modal-body { max-height:50vh; overflow:auto; white-space:pre-wrap; color:var(--secondary); line-height:1.6; }
+    .admin-modal .modal-actions { text-align:right; margin-top:1rem; }
+    .admin-modal .modal-actions .btn { min-width:90px; }
+
     @keyframes slideIn { from{opacity:0;transform:translateX(100px)} to{opacity:1;transform:translateX(0)} }
 
     /* ---- Responsive ---- */
@@ -295,10 +304,10 @@
             <div class="panel-body">
               <table class="data-table">
                 <thead>
-                  <tr><th>Cliente</th><th>Telefone</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Status</th><th>Ações</th></tr>
+                  <tr><th>Cliente</th><th>Telefone</th><th>Serviço</th><th>Data</th><th>Horário</th><th>Status</th><th>Observações</th><th>Ações</th></tr>
                 </thead>
                 <tbody id="appointmentsTableBody">
-                  <tr><td colspan="7" style="text-align:center;color:var(--gray)">Carregando...</td></tr>
+                  <tr><td colspan="8" style="text-align:center;color:var(--gray)">Carregando...</td></tr>
                 </tbody>
               </table>
             </div>
@@ -669,7 +678,7 @@
 
         const tbody = document.getElementById('appointmentsTableBody');
         if (data.appointments.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--gray);padding:2rem">Nenhum agendamento encontrado</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--gray);padding:2rem">Nenhum agendamento encontrado</td></tr>';
           return;
         }
 
@@ -681,11 +690,13 @@
             <td>${formatDate(a.appointment_date)}</td>
             <td>${a.appointment_time}</td>
             <td><span class="status-badge status-${a.status}">${statusLabel(a.status)}</span></td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.notes ? (a.notes.length > 60 ? a.notes.slice(0,60) + '…' : a.notes) : '-'}</td>
             <td>
               ${a.status === 'confirmed' ? `
                 <button class="btn btn-success btn-sm" onclick="updateStatus(${a.id},'completed')">✓</button>
                 <button class="btn btn-danger btn-sm" onclick="updateStatus(${a.id},'cancelled')">✕</button>
               ` : ''}
+              ${a.notes ? `<button class="btn btn-sm" onclick="viewNote(${JSON.stringify(a.notes)})" title="Ver observação">Ver</button>` : ''}
               <button class="btn btn-sm btn-outline" onclick="deleteAppointment(${a.id})" title="Excluir">🗑</button>
             </td>
           </tr>
@@ -1230,6 +1241,40 @@
       toast.textContent = msg;
       document.body.appendChild(toast);
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    // ========== VIEW NOTE (modal) ==========
+    function viewNote(note) {
+      const overlay = document.createElement('div');
+      overlay.className = 'admin-modal-overlay';
+
+      const modal = document.createElement('div');
+      modal.className = 'admin-modal';
+
+      const h = document.createElement('h4');
+      h.textContent = 'Observação';
+
+      const body = document.createElement('div');
+      body.className = 'modal-body';
+      body.textContent = note || '-';
+
+      const actions = document.createElement('div');
+      actions.className = 'modal-actions';
+      const closeBtn = document.createElement('button');
+      closeBtn.className = 'btn btn-primary';
+      closeBtn.textContent = 'Fechar';
+      closeBtn.addEventListener('click', () => overlay.remove());
+      actions.appendChild(closeBtn);
+
+      modal.appendChild(h);
+      modal.appendChild(body);
+      modal.appendChild(actions);
+      overlay.appendChild(modal);
+
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
+      document.addEventListener('keydown', function onEsc(e) { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', onEsc); } });
+
+      document.body.appendChild(overlay);
     }
   </script>
 </body>
