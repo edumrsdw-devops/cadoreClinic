@@ -107,6 +107,17 @@ db.exec(`
   );
 `);
 
+// Migration: ensure `icon` column exists on `services` (for older DBs)
+try {
+  const cols = db.prepare("PRAGMA table_info(services)").all().map(c => c.name);
+  if (!cols.includes('icon')) {
+    db.prepare("ALTER TABLE services ADD COLUMN icon TEXT").run();
+    console.log('DB migration: added services.icon column');
+  }
+} catch (err) {
+  console.warn('DB migration check failed:', err.message || err);
+}
+
 // Seed default data if empty
 function seedData() {
   const adminCount = db.prepare('SELECT COUNT(*) as count FROM admin_users').get();
@@ -150,10 +161,6 @@ function seedData() {
     }
   } catch (err) {
     // ignore if column doesn't exist yet
-    const stmt = db.prepare('INSERT INTO working_hours (day_of_week, start_time, end_time, active) VALUES (?, ?, ?, ?)');
-    for (const h of hours) {
-      stmt.run(h.day, h.start, h.end, h.active);
-    }
   }
 
   // Seed a few international dates so they appear immediately in the public site

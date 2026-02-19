@@ -453,6 +453,7 @@
             <div class="panel-header"><h3>Adicionar Serviço</h3></div>
             <div class="panel-body">
               <form id="serviceForm" onsubmit="addService(event)">
+                <input type="hidden" id="svcId" value="">
                 <div class="form-row">
                   <div class="form-group"><label>Nome *</label><input type="text" id="svcName" required placeholder="Nome do serviço"></div>
                   <div class="form-group" style="display:flex;gap:0.75rem;align-items:center">
@@ -464,6 +465,15 @@
                         <option value="lash">Lash Lifting</option>
                         <option value="brow">Brow Lamination</option>
                         <option value="micro">Micropigmentação</option>
+                        <option value="lip">Lábios</option>
+                        <option value="nail">Unhas</option>
+                        <option value="spa">Spa / Massagem</option>
+                        <option value="laser">Laser</option>
+                        <option value="brush">Maquiagem</option>
+                        <option value="scissors">Modelagem</option>
+                        <option value="bottle">Skincare</option>
+                        <option value="mask">Tratamento Facial</option>
+                        <option value="sparkle">Estética</option>
                       </select>
                     </div>
                     <div id="svcIconPreview" aria-hidden="true" title="Preview do ícone" style="width:56px;height:56px;border-radius:8px;background:rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:center"></div>
@@ -473,7 +483,10 @@
                   <div class="form-group"><label>Duração (min)</label><input type="number" id="svcDuration" value="60" min="15" step="15"></div>
                 </div>
                 <div class="form-group"><label>Descrição</label><textarea id="svcDescription" placeholder="Descrição do serviço..."></textarea></div>
-                <button type="submit" class="btn btn-primary">Adicionar Serviço</button>
+                <div style="display:flex;gap:0.5rem;align-items:center;margin-top:0.5rem">
+                  <button type="submit" id="svcSubmitBtn" class="btn btn-primary">Adicionar Serviço</button>
+                  <button type="button" id="svcCancelBtn" class="btn btn-outline" style="display:none" onclick="resetServiceForm()">Cancelar</button>
+                </div>
               </form>
             </div>
           </div>
@@ -980,6 +993,9 @@
           return;
         }
 
+        // keep a local copy for edit actions
+        window.adminServices = services;
+
         tbody.innerHTML = services.map(s => `
           <tr>
             <td><strong>${s.name}</strong><br><small style="color:var(--gray)">${s.description || ''}</small></td>
@@ -987,6 +1003,7 @@
             <td>${s.duration} min</td>
             <td><span class="status-badge ${s.active ? 'status-confirmed' : 'status-cancelled'}">${s.active ? 'Ativo' : 'Inativo'}</span></td>
             <td>
+              <button class="btn btn-sm" onclick="editService(${s.id})">Editar</button>
               <button class="btn btn-sm ${s.active ? 'btn-outline' : 'btn-success'}" onclick="toggleService(${s.id}, ${!s.active})">${s.active ? 'Desativar' : 'Ativar'}</button>
             </td>
           </tr>
@@ -994,23 +1011,66 @@
       } catch (err) { console.error(err); }
     }
 
+    function editService(id) {
+      const svc = (window.adminServices || []).find(s => s.id === id);
+      if (!svc) return;
+      document.getElementById('svcId').value = svc.id;
+      document.getElementById('svcName').value = svc.name;
+      document.getElementById('svcDescription').value = svc.description || '';
+      document.getElementById('svcDuration').value = svc.duration || 60;
+      document.getElementById('svcIcon').value = svc.icon || 'treatment';
+      document.getElementById('svcSubmitBtn').textContent = 'Salvar Alterações';
+      document.getElementById('svcCancelBtn').style.display = 'inline-block';
+      updateSvcIconPreview();
+    }
+
+    function resetServiceForm() {
+      document.getElementById('svcId').value = '';
+      document.getElementById('serviceForm').reset();
+      document.getElementById('svcSubmitBtn').textContent = 'Adicionar Serviço';
+      document.getElementById('svcCancelBtn').style.display = 'none';
+      updateSvcIconPreview();
+    }
+
     async function addService(e) {
       e.preventDefault();
+      const id = document.getElementById('svcId').value;
       const name = document.getElementById('svcName').value;
       const description = document.getElementById('svcDescription').value;
       const duration = parseInt(document.getElementById('svcDuration').value);
+      const icon = document.getElementById('svcIcon').value;
 
       try {
-        const icon = document.getElementById('svcIcon').value;
-        const res = await fetch(`${API}/services`, {
-          method: 'POST',
-          headers: apiHeaders(),
-          body: JSON.stringify({ name, description, duration, icon })
-        });
-        if (res.ok) {
-          showAdminToast('Serviço adicionado!', 'success');
-          document.getElementById('serviceForm').reset();
-          loadServices();
+        if (id) {
+          // update existing
+          const res = await fetch(`${API}/services/${id}`, {
+            method: 'PATCH',
+            headers: apiHeaders(),
+            body: JSON.stringify({ name, description, duration, icon })
+          });
+          if (res.ok) {
+            showAdminToast('Serviço atualizado!', 'success');
+            resetServiceForm();
+            loadServices();
+          } else {
+            const err = await res.json();
+            showAdminToast(err.error || 'Erro', 'error');
+          }
+        } else {
+          // create new
+          const res = await fetch(`${API}/services`, {
+            method: 'POST',
+            headers: apiHeaders(),
+            body: JSON.stringify({ name, description, duration, icon })
+          });
+          if (res.ok) {
+            showAdminToast('Serviço adicionado!', 'success');
+            document.getElementById('serviceForm').reset();
+            loadServices();
+          } else {
+            const err = await res.json();
+            showAdminToast(err.error || 'Erro', 'error');
+          }
         }
       } catch (err) { showAdminToast('Erro', 'error'); }
       updateSvcIconPreview();
