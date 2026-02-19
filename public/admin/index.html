@@ -653,13 +653,18 @@
         document.getElementById('statTotal').textContent = s.totalCount;
         document.getElementById('statMessages').textContent = s.unreadMessages;
 
-        if (s.upcomingCount > 0) {
-          document.getElementById('badgeAppointments').textContent = s.upcomingCount;
-          document.getElementById('badgeAppointments').style.display = 'inline';
+        // update badge for appointments (hide when zero)
+        const badgeA = document.getElementById('badgeAppointments');
+        if (badgeA) {
+          badgeA.textContent = s.upcomingCount > 0 ? String(s.upcomingCount) : '';
+          badgeA.style.display = s.upcomingCount > 0 ? 'inline' : 'none';
         }
-        if (s.unreadMessages > 0) {
-          document.getElementById('badgeMessages').textContent = s.unreadMessages;
-          document.getElementById('badgeMessages').style.display = 'inline';
+
+        // update badge for messages (hide when zero)
+        const badgeM = document.getElementById('badgeMessages');
+        if (badgeM) {
+          badgeM.textContent = s.unreadMessages > 0 ? String(s.unreadMessages) : '';
+          badgeM.style.display = s.unreadMessages > 0 ? 'inline' : 'none';
         }
       } catch (err) { console.error(err); }
     }
