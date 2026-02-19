@@ -67,6 +67,7 @@ Cadore Clinic/
 - Gerenciar serviços
 - Visualizar mensagens de contato
 - Exportar agendamentos em CSV
+- Alterar Localização (mapa): em **/admin → Localização** pesquise por endereço (sem necessidade de latitude/longitude), selecione o resultado e clique em **Salvar Localização** — o mapa público será atualizado automaticamente.
 
 ## 🛠 Tecnologias
 
