@@ -241,15 +241,15 @@ router.get('/services', authMiddleware, (req, res) => {
 
 router.post('/services', authMiddleware, (req, res) => {
   try {
-    const { name, description, duration, price } = req.body;
+    const { name, description, duration, price, icon } = req.body;
     if (!name) return res.status(400).json({ error: 'Nome é obrigatório' });
 
     const maxOrder = db.prepare('SELECT MAX(sort_order) as max_order FROM services').get();
     const sortOrder = (maxOrder.max_order || 0) + 1;
 
     db.prepare(
-      'INSERT INTO services (name, description, duration, price, sort_order) VALUES (?, ?, ?, ?, ?)'
-    ).run(name, description || null, duration || 60, price || null, sortOrder);
+      'INSERT INTO services (name, description, duration, price, icon, sort_order) VALUES (?, ?, ?, ?, ?, ?)'
+    ).run(name, description || null, duration || 60, price || null, icon || null, sortOrder);
 
     res.status(201).json({ message: 'Serviço adicionado' });
   } catch (err) {
@@ -259,13 +259,14 @@ router.post('/services', authMiddleware, (req, res) => {
 
 router.patch('/services/:id', authMiddleware, (req, res) => {
   try {
-    const { name, description, duration, price, active } = req.body;
+    const { name, description, duration, price, active, icon } = req.body;
     const { id } = req.params;
 
     if (name !== undefined) db.prepare('UPDATE services SET name = ? WHERE id = ?').run(name, id);
     if (description !== undefined) db.prepare('UPDATE services SET description = ? WHERE id = ?').run(description, id);
     if (duration !== undefined) db.prepare('UPDATE services SET duration = ? WHERE id = ?').run(duration, id);
     if (price !== undefined) db.prepare('UPDATE services SET price = ? WHERE id = ?').run(price, id);
+    if (icon !== undefined) db.prepare('UPDATE services SET icon = ? WHERE id = ?').run(icon, id);
     if (active !== undefined) db.prepare('UPDATE services SET active = ? WHERE id = ?').run(active ? 1 : 0, id);
 
     const service = db.prepare('SELECT * FROM services WHERE id = ?').get(id);

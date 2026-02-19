@@ -455,6 +455,17 @@
               <form id="serviceForm" onsubmit="addService(event)">
                 <div class="form-row">
                   <div class="form-group"><label>Nome *</label><input type="text" id="svcName" required placeholder="Nome do serviço"></div>
+                  <div class="form-group"><label>Ícone</label>
+                    <select id="svcIcon" class="form-input">
+                      <option value="treatment">Padrão</option>
+                      <option value="tattoo">Tatuagem</option>
+                      <option value="lash">Lash Lifting</option>
+                      <option value="brow">Brow Lamination</option>
+                      <option value="micro">Micropigmentação</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-row">
                   <div class="form-group"><label>Duração (min)</label><input type="number" id="svcDuration" value="60" min="15" step="15"></div>
                 </div>
                 <div class="form-group"><label>Descrição</label><textarea id="svcDescription" placeholder="Descrição do serviço..."></textarea></div>
@@ -466,7 +477,7 @@
             <div class="panel-header"><h3>Serviços Cadastrados</h3></div>
             <div class="panel-body">
               <table class="data-table">
-                <thead><tr><th>Nome</th><th>Duração</th><th>Status</th><th>Ações</th></tr></thead>
+                <thead><tr><th>Nome</th><th>Ícone</th><th>Duração</th><th>Status</th><th>Ações</th></tr></thead>
                 <tbody id="servicesTableBody"><tr><td colspan="4" style="text-align:center;color:var(--gray)">Carregando...</td></tr></tbody>
               </table>
             </div>
@@ -953,13 +964,14 @@
         const tbody = document.getElementById('servicesTableBody');
 
         if (services.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--gray)">Nenhum serviço</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--gray)">Nenhum serviço</td></tr>';
           return;
         }
 
         tbody.innerHTML = services.map(s => `
           <tr>
             <td><strong>${s.name}</strong><br><small style="color:var(--gray)">${s.description || ''}</small></td>
+            <td><span class="svc-icon">${(s.icon || 'treatment').toUpperCase()}</span></td>
             <td>${s.duration} min</td>
             <td><span class="status-badge ${s.active ? 'status-confirmed' : 'status-cancelled'}">${s.active ? 'Ativo' : 'Inativo'}</span></td>
             <td>
@@ -977,10 +989,11 @@
       const duration = parseInt(document.getElementById('svcDuration').value);
 
       try {
+        const icon = document.getElementById('svcIcon').value;
         const res = await fetch(`${API}/services`, {
           method: 'POST',
           headers: apiHeaders(),
-          body: JSON.stringify({ name, description, duration })
+          body: JSON.stringify({ name, description, duration, icon })
         });
         if (res.ok) {
           showAdminToast('Serviço adicionado!', 'success');

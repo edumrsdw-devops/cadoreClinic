@@ -138,11 +138,11 @@ function initSmoothScroll() {
 // ========== LOAD SERVICES ==========
 async function loadServices() {
   const fallbackServices = [
-    { id: 1, name: 'Remoção de Tatuagem', description: 'Remoção segura e eficaz de tatuagens com tecnologia avançada a laser, proporcionando resultados graduais e naturais.', duration: 60 },
-    { id: 2, name: 'Lash Lifting', description: 'Curvatura natural e duradoura para os cílios, realçando o olhar sem necessidade de extensões.', duration: 45 },
-    { id: 3, name: 'Brow Lamination', description: 'Alinhamento e modelagem das sobrancelhas para um visual preenchido, definido e sofisticado.', duration: 45 },
-    { id: 4, name: 'Micropigmentação', description: 'Técnica de pigmentação semipermanente para sobrancelhas, lábios e olhos com resultado natural e duradouro.', duration: 90 },
-    { id: 5, name: 'Procedimentos Estéticos', description: 'Tratamentos personalizados para valorizar sua beleza natural com segurança e excelência profissional.', duration: 60 }
+    { id: 1, name: 'Remoção de Tatuagem', description: 'Remoção segura e eficaz de tatuagens com tecnologia avançada a laser, proporcionando resultados graduais e naturais.', duration: 60, icon: 'tattoo' },
+    { id: 2, name: 'Lash Lifting', description: 'Curvatura natural e duradoura para os cílios, realçando o olhar sem necessidade de extensões.', duration: 45, icon: 'lash' },
+    { id: 3, name: 'Brow Lamination', description: 'Alinhamento e modelagem das sobrancelhas para um visual preenchido, definido e sofisticado.', duration: 45, icon: 'brow' },
+    { id: 4, name: 'Micropigmentação', description: 'Técnica de pigmentação semipermanente para sobrancelhas, lábios e olhos com resultado natural e duradouro.', duration: 90, icon: 'micro' },
+    { id: 5, name: 'Procedimentos Estéticos', description: 'Tratamentos personalizados para valorizar sua beleza natural com segurança e excelência profissional.', duration: 60, icon: 'treatment' }
   ];
 
   try {
@@ -168,6 +168,13 @@ async function loadServices() {
 function renderServices() {
   const grid = document.getElementById('servicesGrid');
   const icons = {
+    /* icon-name keys */
+    'tattoo': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
+    'lash': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
+    'brow': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2"/><path d="M2 12c1-3 4-6 10-6s9 3 10 6"/></svg>',
+    'micro': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="m16 2-4 4-4-4"/><path d="M12 6v6"/><circle cx="12" cy="17" r="5"/></svg>',
+    'treatment': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>',
+    /* legacy name keys (fallback) */
     'Remoção de Tatuagem': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
     'Lash Lifting': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
     'Brow Lamination': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 19a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2"/><path d="M2 12c1-3 4-6 10-6s9 3 10 6"/></svg>',
@@ -178,7 +185,7 @@ function renderServices() {
   grid.innerHTML = state.services.map(service => `
     <div class="service-card reveal">
       <div class="service-card-icon">
-        ${icons[service.name] || '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'}
+        ${icons[service.icon] || icons[service.name] || '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'}
       </div>
       <h3>${service.name}</h3>
       <p>${service.description || ''}</p>

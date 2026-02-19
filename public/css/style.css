@@ -758,6 +758,24 @@ ul { list-style: none; }
 /* ---- Services Section ---- */
 .services-grid {
   display: grid;
+}
+
+/* service icon badge (admin table) */
+.svc-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 56px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.03);
+  font-family: Arial, sans-serif;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--secondary);
+  text-transform: uppercase;
+}
+
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }

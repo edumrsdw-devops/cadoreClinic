@@ -32,6 +32,7 @@ db.exec(`
     description TEXT,
     duration INTEGER DEFAULT 60,
     price REAL,
+    icon TEXT,
     active INTEGER DEFAULT 1,
     sort_order INTEGER DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
@@ -120,31 +121,35 @@ function seedData() {
   const serviceCount = db.prepare('SELECT COUNT(*) as count FROM services').get();
   if (serviceCount.count === 0) {
     const services = [
-      { name: 'Remoção de Tatuagem', description: 'Remoção segura e eficaz de tatuagens com tecnologia avançada a laser, proporcionando resultados graduais e naturais.', duration: 60, price: null, sort: 1 },
-      { name: 'Lash Lifting', description: 'Curvatura natural e duradoura para os cílios, realçando o olhar sem necessidade de extensões.', duration: 45, price: null, sort: 2 },
-      { name: 'Brow Lamination', description: 'Alinhamento e modelagem das sobrancelhas para um visual preenchido, definido e sofisticado.', duration: 45, price: null, sort: 3 },
-      { name: 'Micropigmentação', description: 'Técnica de pigmentação semipermanente para sobrancelhas, lábios e olhos com resultado natural e duradouro.', duration: 90, price: null, sort: 4 },
-      { name: 'Procedimentos Estéticos', description: 'Tratamentos personalizados para valorizar sua beleza natural com segurança e excelência profissional.', duration: 60, price: null, sort: 5 },
+      { name: 'Remoção de Tatuagem', description: 'Remoção segura e eficaz de tatuagens com tecnologia avançada a laser, proporcionando resultados graduais e naturais.', duration: 60, price: null, sort: 1, icon: 'tattoo' },
+      { name: 'Lash Lifting', description: 'Curvatura natural e duradoura para os cílios, realçando o olhar sem necessidade de extensões.', duration: 45, price: null, sort: 2, icon: 'lash' },
+      { name: 'Brow Lamination', description: 'Alinhamento e modelagem das sobrancelhas para um visual preenchido, definido e sofisticado.', duration: 45, price: null, sort: 3, icon: 'brow' },
+      { name: 'Micropigmentação', description: 'Técnica de pigmentação semipermanente para sobrancelhas, lábios e olhos com resultado natural e duradouro.', duration: 90, price: null, sort: 4, icon: 'micro' },
+      { name: 'Procedimentos Estéticos', description: 'Tratamentos personalizados para valorizar sua beleza natural com segurança e excelência profissional.', duration: 60, price: null, sort: 5, icon: 'treatment' },
     ];
 
-    const stmt = db.prepare('INSERT INTO services (name, description, duration, price, sort_order) VALUES (?, ?, ?, ?, ?)');
+    const stmt = db.prepare('INSERT INTO services (name, description, duration, price, icon, sort_order) VALUES (?, ?, ?, ?, ?, ?)');
     for (const s of services) {
-      stmt.run(s.name, s.description, s.duration, s.price, s.sort);
+      stmt.run(s.name, s.description, s.duration, s.price, s.icon, s.sort);
     }
   }
 
-  const hoursCount = db.prepare('SELECT COUNT(*) as count FROM working_hours').get();
-  if (hoursCount.count === 0) {
-    // Monday to Friday: 9:00 - 18:00, Saturday: 9:00 - 14:00
-    const hours = [
-      { day: 1, start: '09:00', end: '18:00', active: 1 },
-      { day: 2, start: '09:00', end: '18:00', active: 1 },
-      { day: 3, start: '09:00', end: '18:00', active: 1 },
-      { day: 4, start: '09:00', end: '18:00', active: 1 },
-      { day: 5, start: '09:00', end: '18:00', active: 1 },
-      { day: 6, start: '09:00', end: '14:00', active: 1 },
-      { day: 0, start: '09:00', end: '18:00', active: 0 },
-    ];
+  // Ensure existing rows have an icon (migration for older DBs)
+  try {
+    const missing = db.prepare("SELECT id, name FROM services WHERE icon IS NULL OR icon = ''").all();
+    const map = {
+      'Remoção de Tatuagem': 'tattoo',
+      'Lash Lifting': 'lash',
+      'Brow Lamination': 'brow',
+      'Micropigmentação': 'micro',
+      'Procedimentos Estéticos': 'treatment'
+    };
+    const upd = db.prepare('UPDATE services SET icon = ? WHERE id = ?');
+    for (const r of missing) {
+      if (map[r.name]) upd.run(map[r.name], r.id);
+    }
+  } catch (err) {
+    // ignore if column doesn't exist yet
     const stmt = db.prepare('INSERT INTO working_hours (day_of_week, start_time, end_time, active) VALUES (?, ?, ?, ?)');
     for (const h of hours) {
       stmt.run(h.day, h.start, h.end, h.active);
