@@ -104,6 +104,9 @@ router.patch('/appointments/:id', authMiddleware, (req, res) => {
       db.prepare('UPDATE appointments SET notes = ? WHERE id = ?').run(notes, id);
     }
 
+    // bump appointments version so public clients pick up change
+    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('appointments_version', String(Date.now()));
+
     const appointment = db.prepare(
       'SELECT a.*, s.name as service_name FROM appointments a JOIN services s ON a.service_id = s.id WHERE a.id = ?'
     ).get(id);
@@ -111,6 +114,20 @@ router.patch('/appointments/:id', authMiddleware, (req, res) => {
     res.json(appointment);
   } catch (err) {
     res.status(500).json({ error: 'Erro ao atualizar agendamento' });
+  }
+});
+
+// ========== DELETE APPOINTMENT ==========
+router.delete('/appointments/:id', authMiddleware, (req, res) => {
+  try {
+    db.prepare('DELETE FROM appointments WHERE id = ?').run(req.params.id);
+
+    // bump appointments version so public clients pick up change
+    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('appointments_version', String(Date.now()));
+
+    res.json({ message: 'Agendamento excluído' });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao excluir agendamento' });
   }
 });
 

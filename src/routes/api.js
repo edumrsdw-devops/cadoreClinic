@@ -207,6 +207,9 @@ router.post('/appointments', (req, res) => {
       location_country: locationCountry
     };
 
+    // bump appointments version so public clients can refresh availability
+    db.prepare('INSERT OR REPLACE INTO settings (key, value) VALUES (?, ?)').run('appointments_version', String(Date.now()));
+
     res.status(201).json({
       message: 'Agendamento realizado com sucesso!',
       appointment
@@ -214,6 +217,16 @@ router.post('/appointments', (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Erro ao criar agendamento' });
+  }
+});
+
+// expose appointments version so public UI can poll for changes
+router.get('/appointments-version', (req, res) => {
+  try {
+    const row = db.prepare('SELECT value FROM settings WHERE key = ?').get('appointments_version');
+    res.json({ version: row ? row.value : null });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro' });
   }
 });
 

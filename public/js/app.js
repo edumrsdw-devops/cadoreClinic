@@ -35,7 +35,33 @@ document.addEventListener('DOMContentLoaded', () => {
   initWhatsAppLinks();
   initPhoneMask();
   initHeroLines();
+
+  // appointments-version polling: refresh available slots when admin changes appointments
+  pollAppointmentsVersion();
 });
+
+// Poll server for appointments version and refresh available slots if changed
+let _lastAppointmentsVersion = null;
+async function pollAppointmentsVersion() {
+  try {
+    const res = await fetch('/api/appointments-version');
+    if (res.ok) {
+      const j = await res.json();
+      const v = j && j.version ? j.version : null;
+      if (_lastAppointmentsVersion && v && v !== _lastAppointmentsVersion) {
+        // if user has booking date selected and time slots panel is open, refresh slots
+        if (state.selectedDate && document.getElementById('timeSlotsContainer') && document.getElementById('timeSlotsContainer').classList.contains('open')) {
+          selectDate(state.selectedDate);
+        }
+      }
+      _lastAppointmentsVersion = v;
+    }
+  } catch (err) {
+    // ignore polling errors silently
+  } finally {
+    setTimeout(pollAppointmentsVersion, 8000);
+  }
+}
 
 // ========== HEADER SCROLL ==========
 function initHeader() {
@@ -183,6 +209,15 @@ function renderServices() {
     'bottle': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M9 7h6"/></svg>',
     'mask': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-6 10-6 10 6 10 6v4s-3 6-10 6S2 16 2 16v-4z"/><path d="M8 10h.01M16 10h.01"/></svg>',
     'sparkle': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z"/></svg>',
+
+    'syringe': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 3l-3 3-7 7-4 4-3 3 1 1 3-3 4-4 7-7 3-3-1-1z"/><path d="M14 7l3-3"/></svg>',
+    'dropper': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 8c0 4-8 12-8 12S4 12 4 8a8 8 0 0116 0z"/><path d="M8 8l8-8"/></svg>',
+    'leaf': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12c4-8 14-8 20 0-6-4-14-4-20 0z"/><path d="M12 2v20"/></svg>',
+    'heart': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.8 4.6c-1.5-1.4-3.9-1.4-5.5 0L12 7l-3.3-2.4c-1.6-1.4-4-1.4-5.5 0-1.6 1.5-1.6 4 0 5.5L12 20l8.8-9.9c1.6-1.5 1.6-4 0-5.5z"/></svg>',
+    'wax': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2s4 3 4 6c0 3-4 6-4 6s-4-3-4-6c0-3 4-6 4-6z"/><path d="M12 14v6"/></svg>',
+    'pedicure': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21v-2a4 4 0 014-4h6a4 4 0 014 4v2"/><path d="M7 7a2 2 0 100-4 2 2 0 000 4z"/></svg>',
+    'peel': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 2h10l-3 7v8a2 2 0 01-4 0v-8L7 2z"/></svg>',
+
     /* legacy name keys (fallback) */
     'Remoção de Tatuagem': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"/></svg>',
     'Lash Lifting': '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>',
