@@ -740,14 +740,45 @@
 
     async function updateStatus(id, status) {
       try {
-        await fetch(`${API}/appointments/${id}`, {
+        // preserve previous status so we can undo
+        const prev = (window.adminAppointments || []).find(a => a.id === id);
+        const prevStatus = prev ? prev.status : null;
+
+        const res = await fetch(`${API}/appointments/${id}`, {
           method: 'PATCH',
           headers: apiHeaders(),
           body: JSON.stringify({ status })
         });
-        showAdminToast('Status atualizado!', 'success');
-        loadAppointments();
-        loadStats();
+
+        if (res.ok) {
+          // optimistic UI update
+          loadAppointments();
+          loadStats();
+
+          // show undo toast (8s)
+          const label = status === 'confirmed' ? 'Confirmado' : status === 'cancelled' ? 'Cancelado' : 'Atualizado';
+          showAdminUndoToast(`${label} — desfazer?`, 'Desfazer', async () => {
+            if (prevStatus === null) return;
+            try {
+              const r2 = await fetch(`${API}/appointments/${id}`, {
+                method: 'PATCH',
+                headers: apiHeaders(),
+                body: JSON.stringify({ status: prevStatus })
+              });
+              if (r2.ok) {
+                showAdminToast('Ação desfeita', 'success');
+                loadAppointments();
+                loadStats();
+              } else {
+                const e = await r2.json();
+                showAdminToast(e.error || 'Não foi possível desfazer', 'error');
+              }
+            } catch (err) { showAdminToast('Erro ao desfazer', 'error'); }
+          }, 8000);
+        } else {
+          const err = await res.json();
+          showAdminToast(err.error || 'Erro ao atualizar', 'error');
+        }
       } catch (err) { showAdminToast('Erro ao atualizar', 'error'); }
     }
 
@@ -1249,6 +1280,37 @@
       toast.textContent = msg;
       document.body.appendChild(toast);
       setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+    }
+
+    // show a toast with an Undo action (returns immediately)
+    function showAdminUndoToast(msg, undoLabel, undoCallback, timeout = 8000) {
+      const toast = document.createElement('div');
+      toast.className = 'admin-toast success';
+
+      const text = document.createElement('span');
+      text.style.marginRight = '12px';
+      text.textContent = msg;
+
+      const btn = document.createElement('button');
+      btn.className = 'btn btn-sm btn-outline';
+      btn.textContent = undoLabel || 'Desfazer';
+      btn.onclick = async () => {
+        try {
+          btn.disabled = true;
+          await undoCallback();
+          toast.remove();
+        } catch (err) {
+          btn.disabled = false;
+        }
+      };
+
+      toast.appendChild(text);
+      toast.appendChild(btn);
+      document.body.appendChild(toast);
+
+      const timer = setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, timeout);
+      // allow manual removal on click outside the button
+      toast.addEventListener('click', (e) => { if (e.target === toast) { clearTimeout(timer); toast.remove(); } });
     }
 
     // ========== VIEW NOTE (modal) ==========
