@@ -1699,6 +1699,9 @@ ul { list-style: none; }
   .section { padding: 4rem 0; }
   .section-header h2 { font-size: 2rem; }
 
+  /* Make About title match other section titles on tablet/phone */
+  .about-content h2 { font-size: 2rem; margin-bottom: 1rem; }
+
   .side-menu {
     width: 100%;
     max-width: 100%;
@@ -1770,6 +1773,11 @@ ul { list-style: none; }
             padding: 2.2rem 0 1.5rem 0;
             text-align: center;
           }
+
+          /* Ensure About title and spacing match other sections on small screens */
+          .about-content h2 { font-size: 1.8rem; margin-bottom: 1rem; }
+          .about-content p { font-size: 1.05rem; line-height: 1.6; }
+
           .about-grid,
           .booking-wrapper {
             width: 100%;
