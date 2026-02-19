@@ -407,6 +407,15 @@
             <div class="panel-body">
               <form id="mapForm" onsubmit="saveMapSettings(event)">
                 <div class="form-group">
+                  <label>Pesquisar por endereço</label>
+                  <div style="display:flex;gap:0.5rem;align-items:center">
+                    <input type="search" id="mapSearch" placeholder="Digite um endereço (ex: Setor Bueno, Goiânia)" class="form-input" style="flex:1">
+                    <button type="button" class="btn btn-outline" id="mapSearchBtn" onclick="performGeocodeSearch()">Buscar</button>
+                  </div>
+                  <div id="mapSearchResults" style="margin-top:0.5rem;border:1px solid #eee;background:#fff;border-radius:6px;max-height:200px;overflow:auto;display:none;box-shadow:0 6px 18px rgba(0,0,0,0.06);"></div>
+                </div>
+
+                <div class="form-group">
                   <label>Endereço / Rótulo</label>
                   <input type="text" id="mapLabel" placeholder="Ex: Setor Bueno — Goiânia" class="form-input">
                 </div>
@@ -814,6 +823,123 @@
         loadIntlDates();
       } catch (err) { showAdminToast('Erro', 'error'); }
     }
+
+    // ========== MAP SETTINGS (Admin) ==========
+    async function loadMapSettings() {
+      try {
+        const res = await fetch(`${API}/map`, { headers: apiHeaders() });
+        if (!res.ok) throw new Error('failed');
+        const m = await res.json();
+        document.getElementById('mapLabel').value = m.label || '';
+        document.getElementById('mapLat').value = m.lat || '';
+        document.getElementById('mapLng').value = m.lng || '';
+        document.getElementById('mapZoom').value = m.zoom || 13;
+        updateMapPreview();
+      } catch (err) {
+        console.error('loadMapSettings', err);
+      }
+    }
+
+    function updateMapPreview() {
+      const lat = document.getElementById('mapLat').value;
+      const lng = document.getElementById('mapLng').value;
+      const zoom = document.getElementById('mapZoom').value || 13;
+      const iframe = document.getElementById('mapPreview');
+      if (lat && lng) iframe.src = `https://maps.google.com/maps?q=${lat},${lng}&z=${zoom}&output=embed`;
+      else iframe.src = '';
+    }
+
+    async function saveMapSettings(e) {
+      e.preventDefault();
+      try {
+        const lat = parseFloat(document.getElementById('mapLat').value);
+        const lng = parseFloat(document.getElementById('mapLng').value);
+        const label = document.getElementById('mapLabel').value;
+        const zoom = parseInt(document.getElementById('mapZoom').value, 10) || 13;
+        const res = await fetch(`${API}/map`, {
+          method: 'PATCH',
+          headers: apiHeaders(),
+          body: JSON.stringify({ lat, lng, label, zoom })
+        });
+        if (res.ok) {
+          showAdminToast('Localização atualizada', 'success');
+          loadMapSettings();
+        } else {
+          const err = await res.json();
+          showAdminToast(err.error || 'Erro', 'error');
+        }
+      } catch (err) {
+        showAdminToast('Erro de conexão', 'error');
+      }
+    }
+
+    // ========== GEOCODING (Nominatim) ==========
+    let _mapSearchTimer = null;
+    async function performGeocodeSearch() {
+      const q = document.getElementById('mapSearch').value.trim();
+      if (!q) return showGeocodeResults([]);
+      try {
+        const container = document.getElementById('mapSearchResults');
+        container.style.display = 'block';
+        container.innerHTML = '<div style="padding:0.75rem;color:#777">Buscando...</div>';
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=6&q=${encodeURIComponent(q)}`);
+        const items = await res.json();
+        showGeocodeResults(items);
+      } catch (err) {
+        console.error('geocode', err);
+        showGeocodeResults([]);
+      }
+    }
+
+    function debouncedMapSearch(ev) {
+      clearTimeout(_mapSearchTimer);
+      const q = ev.target.value.trim();
+      const container = document.getElementById('mapSearchResults');
+      if (!q) { container.style.display = 'none'; container.innerHTML = ''; return; }
+      _mapSearchTimer = setTimeout(() => performGeocodeSearch(), 350);
+    }
+
+    function showGeocodeResults(items) {
+      const container = document.getElementById('mapSearchResults');
+      if (!items || items.length === 0) { container.style.display = 'none'; container.innerHTML = ''; return; }
+      container.style.display = 'block';
+      container.innerHTML = items.map((it, idx) => `
+        <div class="map-search-item" data-idx="${idx}" style="padding:0.6rem 0.75rem;border-bottom:1px solid #f2f2f2;cursor:pointer">
+          <div style="font-size:0.9rem">${it.display_name}</div>
+          <div style="font-size:0.78rem;color:#888;margin-top:4px">lat: ${parseFloat(it.lat).toFixed(6)} • lon: ${parseFloat(it.lon).toFixed(6)}</div>
+        </div>
+      `).join('');
+      Array.from(container.querySelectorAll('.map-search-item')).forEach((el, i) => {
+        el.addEventListener('click', () => {
+          const item = items[i];
+          document.getElementById('mapLabel').value = item.display_name;
+          document.getElementById('mapLat').value = parseFloat(item.lat).toFixed(6);
+          document.getElementById('mapLng').value = parseFloat(item.lon).toFixed(6);
+          container.style.display = 'none';
+          updateMapPreview();
+        });
+      });
+    }
+
+    // wire input events for search and preview
+    document.addEventListener('DOMContentLoaded', () => {
+      const s = document.getElementById('mapSearch');
+      if (s) s.addEventListener('input', debouncedMapSearch);
+      const latEl = document.getElementById('mapLat');
+      const lngEl = document.getElementById('mapLng');
+      const zoomEl = document.getElementById('mapZoom');
+      if (latEl) latEl.addEventListener('input', updateMapPreview);
+      if (lngEl) lngEl.addEventListener('input', updateMapPreview);
+      if (zoomEl) zoomEl.addEventListener('input', updateMapPreview);
+    });
+
+    document.addEventListener('click', (e) => {
+      const container = document.getElementById('mapSearchResults');
+      if (!container) return;
+      if (!e.target.closest('#mapSearch') && !e.target.closest('#mapSearchResults')) {
+        container.style.display = 'none';
+      }
+    });
 
     // ========== SERVICES ==========
     async function loadServices() {
