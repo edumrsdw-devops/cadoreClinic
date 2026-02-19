@@ -691,7 +691,7 @@
         window.adminAppointments = data.appointments;
 
         tbody.innerHTML = data.appointments.map(a => `
-          <tr>
+          <tr id="appt-${a.id}">
             <td><strong>${a.client_name}</strong></td>
             <td>${a.client_phone}</td>
             <td>${a.service_name}</td>
@@ -699,7 +699,7 @@
             <td>${a.appointment_time}</td>
             <td><span class="status-badge status-${a.status}">${statusLabel(a.status)}</span></td>
             <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.notes ? (a.notes.length > 60 ? a.notes.slice(0,60) + '…' : a.notes) : '-'}</td>
-            <td>
+            <td class="appt-actions">
               ${a.status === 'confirmed' ? `
                 <button class="btn btn-success btn-sm" onclick="updateStatus(${a.id},'completed')">✓</button>
                 <button class="btn btn-danger btn-sm" onclick="updateStatus(${a.id},'cancelled')">✕</button>
@@ -740,7 +740,7 @@
 
     async function updateStatus(id, status) {
       try {
-        // preserve previous status so we can undo
+        // find previous status from cached appointments
         const prev = (window.adminAppointments || []).find(a => a.id === id);
         const prevStatus = prev ? prev.status : null;
 
@@ -750,36 +750,22 @@
           body: JSON.stringify({ status })
         });
 
-        if (res.ok) {
-          // optimistic UI update
-          loadAppointments();
-          loadStats();
-
-          // show undo toast (8s)
-          const label = status === 'confirmed' ? 'Confirmado' : status === 'cancelled' ? 'Cancelado' : 'Atualizado';
-          showAdminUndoToast(`${label} — desfazer?`, 'Desfazer', async () => {
-            if (prevStatus === null) return;
-            try {
-              const r2 = await fetch(`${API}/appointments/${id}`, {
-                method: 'PATCH',
-                headers: apiHeaders(),
-                body: JSON.stringify({ status: prevStatus })
-              });
-              if (r2.ok) {
-                showAdminToast('Ação desfeita', 'success');
-                loadAppointments();
-                loadStats();
-              } else {
-                const e = await r2.json();
-                showAdminToast(e.error || 'Não foi possível desfazer', 'error');
-              }
-            } catch (err) { showAdminToast('Erro ao desfazer', 'error'); }
-          }, 8000);
-        } else {
-          const err = await res.json();
-          showAdminToast(err.error || 'Erro ao atualizar', 'error');
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          return showAdminToast(e.error || 'Erro ao atualizar', 'error');
         }
-      } catch (err) { showAdminToast('Erro ao atualizar', 'error'); }
+
+        // update local cache and DOM row
+        if (window.adminAppointments) {
+          const idx = window.adminAppointments.findIndex(a => a.id === id);
+          if (idx !== -1) window.adminAppointments[idx].status = status;
+        }
+        updateAppointmentRowStatus(id, status);
+        loadStats();
+
+        // show inline undo button where actions are
+        showInlineUndo(id, prevStatus, 8000);
+      } catch (err) { console.error(err); showAdminToast('Erro ao atualizar', 'error'); }
     }
 
     async function deleteAppointment(id) {
@@ -1311,6 +1297,92 @@
       const timer = setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, timeout);
       // allow manual removal on click outside the button
       toast.addEventListener('click', (e) => { if (e.target === toast) { clearTimeout(timer); toast.remove(); } });
+    }
+
+    // ---- Inline undo helpers ----
+    window._undoTimers = window._undoTimers || {};
+
+    function updateAppointmentRowStatus(id, status) {
+      const row = document.getElementById(`appt-${id}`);
+      if (!row) return;
+      const badge = row.querySelector('.status-badge');
+      if (badge) {
+        badge.className = `status-badge status-${status}`;
+        badge.textContent = statusLabel(status);
+      }
+      // update action buttons (for confirmed state)
+      const actions = row.querySelector('.appt-actions');
+      if (actions) {
+        // rebuild action buttons based on status
+        let html = '';
+        if (status === 'confirmed') {
+          html += `<button class="btn btn-success btn-sm" onclick="updateStatus(${id},'completed')">✓</button>`;
+          html += `<button class="btn btn-danger btn-sm" onclick="updateStatus(${id},'cancelled')">✕</button>`;
+        }
+        const appt = (window.adminAppointments || []).find(a => a.id === id);
+        if (appt && appt.notes) html += `<button class="btn btn-sm" onclick="viewNoteById(${id})" title="Ver observação">Ver</button>`;
+        html += `<button class="btn btn-sm btn-outline" onclick="deleteAppointment(${id})" title="Excluir">🗑</button>`;
+        actions.innerHTML = html;
+      }
+    }
+
+    function showInlineUndo(id, prevStatus, timeout = 8000) {
+      // clear any existing undo timer for this id
+      if (window._undoTimers[id]) {
+        clearTimeout(window._undoTimers[id]);
+        delete window._undoTimers[id];
+      }
+
+      const row = document.getElementById(`appt-${id}`);
+      if (!row) return;
+      const actions = row.querySelector('.appt-actions');
+      if (!actions) return;
+
+      // save current actions so we can restore later
+      const originalHTML = actions.innerHTML;
+
+      // create Undo button inline
+      actions.innerHTML = `<button class="btn btn-sm btn-outline" id="undo-btn-${id}">Desfazer</button>`;
+      const undoBtn = document.getElementById(`undo-btn-${id}`);
+      undoBtn.focus();
+
+      // clicking undo reverts status immediately
+      undoBtn.addEventListener('click', async () => {
+        undoBtn.disabled = true;
+        try {
+          const res = await fetch(`${API}/appointments/${id}`, {
+            method: 'PATCH',
+            headers: apiHeaders(),
+            body: JSON.stringify({ status: prevStatus })
+          });
+          if (res.ok) {
+            // update cache and UI
+            if (window.adminAppointments) {
+              const ap = window.adminAppointments.find(a => a.id === id);
+              if (ap) ap.status = prevStatus;
+            }
+            updateAppointmentRowStatus(id, prevStatus);
+            loadStats();
+            showAdminToast('Ação desfeita', 'success');
+          } else {
+            const e = await res.json().catch(() => ({}));
+            showAdminToast(e.error || 'Erro ao desfazer', 'error');
+            actions.innerHTML = originalHTML;
+          }
+        } catch (err) {
+          console.error(err);
+          showAdminToast('Erro ao desfazer', 'error');
+          actions.innerHTML = originalHTML;
+        }
+        // clear timer if any
+        if (window._undoTimers[id]) { clearTimeout(window._undoTimers[id]); delete window._undoTimers[id]; }
+      });
+
+      // auto-remove undo after timeout and restore actions
+      window._undoTimers[id] = setTimeout(() => {
+        actions.innerHTML = originalHTML;
+        delete window._undoTimers[id];
+      }, timeout);
     }
 
     // ========== VIEW NOTE (modal) ==========
