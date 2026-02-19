@@ -282,6 +282,8 @@ router.delete('/services/:id', authMiddleware, (req, res) => {
     const id = req.params.id;
     const cascade = req.query.cascade === '1' || req.query.cascade === 'true';
 
+    console.log(`ADMIN: request to DELETE service id=${id} cascade=${cascade} by user=${req.user && req.user.username ? req.user.username : req.user && req.user.name}`);
+
     const linked = db.prepare('SELECT COUNT(*) as count FROM appointments WHERE service_id = ?').get(id);
     const linkedCount = linked ? linked.count : 0;
 
@@ -297,14 +299,16 @@ router.delete('/services/:id', authMiddleware, (req, res) => {
         db.prepare('DELETE FROM services WHERE id = ?').run(serviceId);
       });
       tx(id);
+      console.log(`ADMIN: deleted service id=${id} and ${linkedCount} appointment(s)`);
       return res.json({ message: `Serviço e ${linkedCount} agendamento(s) excluídos` });
     }
 
     // no linked appointments or cascade not requested
     db.prepare('DELETE FROM services WHERE id = ?').run(id);
+    console.log(`ADMIN: deleted service id=${id}`);
     res.json({ message: 'Serviço excluído' });
   } catch (err) {
-    console.error(err);
+    console.error('ADMIN: delete service error', err);
     res.status(500).json({ error: 'Erro ao excluir serviço' });
   }
 });

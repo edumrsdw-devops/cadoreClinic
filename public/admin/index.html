@@ -1120,10 +1120,13 @@
           return;
         }
 
-        const err = await res.json();
+        // try to parse JSON body; fallback to text
+        let body = null;
+        try { body = await res.json(); } catch (e) { body = await res.text(); }
+
         // If server reports linked appointments, offer cascade delete
-        if (res.status === 409 && err.linked) {
-          const cnt = err.linked;
+        if (res.status === 409 && body && body.linked) {
+          const cnt = body.linked;
           if (confirm(`Existem ${cnt} agendamento(s) vinculados a este serviço. Deseja excluir o serviço e remover também esses agendamentos?`)) {
             const cascadeRes = await fetch(`${API}/services/${id}?cascade=1`, { method: 'DELETE', headers: apiHeaders() });
             if (cascadeRes.ok) {
@@ -1131,14 +1134,17 @@
               loadServices();
               loadAppointments();
             } else {
-              const cascadeErr = await cascadeRes.json();
-              showAdminToast(cascadeErr.error || 'Erro ao excluir com agendamentos', 'error');
+              let cascadeBody = null;
+              try { cascadeBody = await cascadeRes.json(); } catch (e) { cascadeBody = await cascadeRes.text(); }
+              console.error('cascade delete failed', cascadeRes.status, cascadeBody);
+              showAdminToast((cascadeBody && cascadeBody.error) || `Erro ao excluir (status ${cascadeRes.status})`, 'error');
             }
           }
         } else {
-          showAdminToast(err.error || 'Erro ao excluir serviço', 'error');
+          console.error('delete failed', res.status, body);
+          showAdminToast((body && body.error) || `Erro ao excluir (status ${res.status})`, 'error');
         }
-      } catch (err) { showAdminToast('Erro ao excluir serviço', 'error'); }
+      } catch (err) { console.error('deleteService error', err); showAdminToast('Erro ao excluir serviço', 'error'); }
     }
 
     // === service icon preview helper ===
